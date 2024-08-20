@@ -1,7 +1,7 @@
 /** Copyright (c) 2022-2024, Harry Huang
  * At GPL-3.0 License
  */
-package cn.harryh.arkpets.utils;
+package cn.harryh.arkpets.hwnd;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -12,22 +12,9 @@ import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinUser;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-
-public class HWndCtrl {
-    public final HWND hWnd;
-    public final String windowText;
+public class User32HWndCtrl extends HWndCtrl<HWND>{
     public final Pointer windowPointer;
-    public final int posTop;
-    public final int posBottom;
-    public final int posLeft;
-    public final int posRight;
-    public final int windowWidth;
-    public final int windowHeight;
-
-    public static final HWndCtrl EMPTY = new HWndCtrl();
 
     public static final int WS_EX_TOPMOST       = 0x00000008;
     public static final int WS_EX_TRANSPARENT   = 0x00000020;
@@ -50,46 +37,35 @@ public class HWndCtrl {
     /** HWnd Controller instance.
      * @param hWnd The handle of the window.
      */
-    public HWndCtrl(HWND hWnd) {
-        this.hWnd = hWnd;
-        windowText = getWindowText(hWnd);
+    public User32HWndCtrl(HWND hWnd) {
+        super(hWnd);
         windowPointer = getWindowIdx(hWnd);
-        RECT rect = getWindowRect(hWnd);
-        posTop = rect.top;
-        posBottom = rect.bottom;
-        posLeft = rect.left;
-        posRight = rect.right;
-        windowWidth = posRight-posLeft;
-        windowHeight = posBottom-posTop;
     }
 
-    /** HWnd Controller instance.
+    /** Find a window.
      * @param className The class name of the window.
      * @param windowName The title of the window.
      */
-    public HWndCtrl(String className, String windowName) {
-        this(User32.INSTANCE.FindWindow(className, windowName));
+    public static HWndCtrl<HWND> find(String className, String windowName) {
+        HWND hwnd=User32.INSTANCE.FindWindow(className, windowName);
+        if(hwnd!=null){
+            return new User32HWndCtrl(hwnd);
+        }
+        return null;
     }
 
     /** HWnd Controller instance.
      * @param pointer The pointer.
      */
-    public HWndCtrl(int pointer) {
+    public User32HWndCtrl(int pointer) {
         this(new HWND(Pointer.createConstant(pointer)));
     }
 
     /** Empty HWnd Controller instance.
      */
-    public HWndCtrl() {
-        hWnd = null;
-        windowText = "";
+    public User32HWndCtrl() {
+        super();
         windowPointer = null;
-        posTop = 0;
-        posBottom = 0;
-        posLeft = 0;
-        posRight = 0;
-        windowWidth = 0;
-        windowHeight = 0;
     }
 
     /** Returns true if the handle is empty.
@@ -108,21 +84,7 @@ public class HWndCtrl {
     /** Returns true if the window is visible now.
      */
     public boolean isVisible() {
-        return isVisible(hWnd);
-    }
-
-    /** Gets the center X position.
-     * @return X.
-     */
-    public float getCenterX() {
-        return posLeft + windowWidth / 2f;
-    }
-
-    /** Gets the center Y position.
-     * @return Y.
-     */
-    public float getCenterY() {
-        return posTop + windowHeight / 2f;
+        return visible(hWnd);
     }
 
     /** Requests to close the window.
@@ -174,7 +136,7 @@ public class HWndCtrl {
      * @param w The new width of the window, in pixels.
      * @param h The new height of the window, in pixels.
      */
-    public void setWindowPosition(HWndCtrl insertAfter, int x, int y, int w, int h) {
+    public void setWindowPosition(HWndCtrl<HWND> insertAfter, int x, int y, int w, int h) {
         if (isEmpty()) return;
         User32.INSTANCE.SetWindowPos(hWnd, insertAfter.hWnd, x, y, w, h, WinUser.SWP_NOACTIVATE);
     }
@@ -185,9 +147,45 @@ public class HWndCtrl {
     public void setWindowTransparent(boolean transparent) {
         if (isEmpty()) return;
         if (transparent)
-            setWindowExStyle(getWindowExStyle() | HWndCtrl.WS_EX_TRANSPARENT);
+            setWindowExStyle(getWindowExStyle() | User32HWndCtrl.WS_EX_TRANSPARENT);
         else
-            setWindowExStyle(getWindowExStyle() & ~HWndCtrl.WS_EX_TRANSPARENT);
+            setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_TRANSPARENT);
+    }
+
+    /**
+     * Sets the window is a tool window.
+     * @param enable Whether the window is a tool window.
+     */
+    public void setToolWindow(boolean enable) {
+        if (isEmpty()) return;
+        if (enable)
+            setWindowExStyle(getWindowExStyle() | User32HWndCtrl.WS_EX_TOOLWINDOW);
+        else
+            setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_TOOLWINDOW);
+    }
+
+    /**
+     * Sets the window is layered.
+     * @param enable Whether the window is layered.
+     */
+    public void setLayered(boolean enable){
+        if (isEmpty()) return;
+        if (enable)
+            setWindowExStyle(getWindowExStyle() | User32HWndCtrl.WS_EX_LAYERED);
+        else
+            setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_LAYERED);
+    }
+
+    /**
+     * Sets the window is topmost.
+     * @param enable Whether the window is topmost.
+     */
+    public void setTopMost(boolean enable){
+        if (isEmpty()) return;
+        if (enable)
+            setWindowExStyle(getWindowExStyle() | User32HWndCtrl.WS_EX_TOPMOST);
+        else
+            setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_TOPMOST);
     }
 
     /** Sends a mouse event message to the window.
@@ -195,33 +193,36 @@ public class HWndCtrl {
      * @param x The X-axis coordinate, related to the left border of the window.
      * @param y The Y-axis coordinate, related to the top border of the window.
      */
-    public void sendMouseEvent(int msg, int x, int y) {
+    public void sendMouseEvent(MouseEvent msg, int x, int y) {
+        int wmsg=switch (msg){
+            case MOUSEMOVE -> WM_MOUSEMOVE;
+            case LBUTTONDOWN -> WM_LBUTTONDOWN;
+            case LBUTTONUP -> WM_LBUTTONUP;
+            case RBUTTONDOWN -> WM_RBUTTONDOWN;
+            case RBUTTONUP -> WM_RBUTTONUP;
+            case MBUTTONDOWN -> WM_MBUTTONDOWN;
+            case MBUTTONUP -> WM_MBUTTONUP;
+            default -> 0;
+        };
         int wParam = switch (msg) {
-            case WM_LBUTTONDOWN -> MK_LBUTTON;
-            case WM_RBUTTONDOWN -> MK_RBUTTON;
-            case WM_MBUTTONDOWN -> MK_MBUTTON;
+            case LBUTTONDOWN -> MK_LBUTTON;
+            case RBUTTONDOWN -> MK_RBUTTON;
+            case MBUTTONDOWN -> MK_MBUTTON;
             default -> 0;
         };
         int lParam = (y << 16) | x;
-        User32.INSTANCE.SendMessage(hWnd, msg, new WinDef.WPARAM(wParam), new WinDef.LPARAM(lParam));
-    }
-
-    /** Gets a new HWndCtrl which contains the updated information of this window.
-     * @return The up-to-dated HWndCtrl.
-     */
-    public HWndCtrl updated() {
-        return new HWndCtrl(hWnd);
+        User32.INSTANCE.SendMessage(hWnd, wmsg, new WinDef.WPARAM(wParam), new WinDef.LPARAM(lParam));
     }
 
     /** Gets the current list of windows.
      * @param only_visible Whether exclude the invisible window.
      * @return An ArrayList consists of HWndCtrls.
      */
-    public static ArrayList<HWndCtrl> getWindowList(boolean only_visible) {
-        ArrayList<HWndCtrl> windowList = new ArrayList<>();
+    public static ArrayList<User32HWndCtrl> getWindowList(boolean only_visible) {
+        ArrayList<User32HWndCtrl> windowList = new ArrayList<>();
         User32.INSTANCE.EnumWindows((hWnd, arg1) -> {
-            if (User32.INSTANCE.IsWindow(hWnd) && (!only_visible || isVisible(hWnd)))
-                windowList.add(new HWndCtrl(hWnd));
+            if (User32.INSTANCE.IsWindow(hWnd) && (!only_visible || visible(hWnd)))
+                windowList.add(new User32HWndCtrl(hWnd));
             return true;
         }, null);
         return windowList;
@@ -232,22 +233,30 @@ public class HWndCtrl {
      * @param exclude_ws_ex Exclude the specific window-style-extra.
      * @return An ArrayList consists of HWndCtrls.
      */
-    public static ArrayList<HWndCtrl> getWindowList(boolean only_visible, long exclude_ws_ex) {
-        ArrayList<HWndCtrl> windowList = new ArrayList<>();
+    public static ArrayList<User32HWndCtrl> getWindowList(boolean only_visible, long exclude_ws_ex) {
+        ArrayList<User32HWndCtrl> windowList = new ArrayList<>();
         User32.INSTANCE.EnumWindows((hWnd, arg1) -> {
-            if (User32.INSTANCE.IsWindow(hWnd) && (!only_visible || isVisible(hWnd))
+            if (User32.INSTANCE.IsWindow(hWnd) && (!only_visible || visible(hWnd))
                     && (User32.INSTANCE.GetWindowLong(hWnd, WinUser.GWL_EXSTYLE) & exclude_ws_ex) != exclude_ws_ex)
-                windowList.add(new HWndCtrl(hWnd));
+                windowList.add(new User32HWndCtrl(hWnd));
             return true;
         }, null);
         return windowList;
     }
 
-    private static boolean isVisible(HWND hWnd) {
+    /**
+     * Gets the topmost window.
+     * @return The topmost window's HWndCtrl.
+     */
+    public static User32HWndCtrl getTopMost(){
+        return new User32HWndCtrl(-1);
+    }
+
+    private static boolean visible(HWND hWnd) {
         try {
             if (!User32.INSTANCE.IsWindowVisible(hWnd) || !User32.INSTANCE.IsWindowEnabled(hWnd))
                 return false;
-            RECT rect = getWindowRect(hWnd);
+            WindowRect rect = getRect(hWnd);
             if (rect.top == rect.bottom || rect.left == rect.right)
                 return false;
         } catch(Exception e) {
@@ -260,16 +269,25 @@ public class HWndCtrl {
         return hWnd.getPointer();
     }
 
-    private static String getWindowText(HWND hWnd) {
+    public String getWindowText(HWND hWnd) {
         char[] text = new char[1024];
         User32.INSTANCE.GetWindowText(hWnd, text, 1024);
         return Native.toString(text);
     }
 
-    private static RECT getWindowRect(HWND hWnd) {
+    private static WindowRect getRect(HWND hWnd) {
         RECT rect = new RECT();
         User32.INSTANCE.GetWindowRect(hWnd, rect);
-        return rect;
+        WindowRect newRect=new WindowRect();
+        newRect.top= rect.top;
+        newRect.bottom= rect.bottom;
+        newRect.left= rect.left;
+        newRect.right= rect.right;
+        return newRect;
+    }
+
+    public WindowRect getWindowRect(HWND hWnd) {
+        return getRect(hWnd);
     }
 
     @Override
@@ -277,7 +295,7 @@ public class HWndCtrl {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        HWndCtrl hWndCtrl = (HWndCtrl)o;
+        User32HWndCtrl hWndCtrl = (User32HWndCtrl)o;
         return hWnd.equals(hWndCtrl.hWnd);
     }
 
@@ -289,50 +307,5 @@ public class HWndCtrl {
     @Override
     public String toString() {
         return "‘" + windowText + "’ " + windowWidth + "*" + windowHeight + " style=" + getWindowExStyle();
-    }
-
-
-    public static class NumberedTitleManager {
-        private final String zeroNameFormat;
-        private final String numberedNameFormat;
-        private final Pattern zeroNamePattern;
-        private final Pattern numberedNamePattern;
-
-        public NumberedTitleManager(String coreName) {
-            zeroNameFormat = coreName;
-            numberedNameFormat = coreName + " (%d)";
-            zeroNamePattern = Pattern.compile("^" + coreName + "$");
-            numberedNamePattern = Pattern.compile("^" + coreName + " \\(([0-9]+)\\)");
-        }
-
-        public int getNumber(HWndCtrl hWndCtrl) {
-            if (hWndCtrl.isEmpty()) return -1;
-            return getNumber(hWndCtrl.windowText);
-        }
-
-        public int getNumber(String windowText) {
-            if (windowText.isEmpty()) return -1;
-            if (zeroNamePattern.matcher(windowText).find()) return 0;
-            try {
-                Matcher matcher = numberedNamePattern.matcher(windowText);
-                return matcher.find() ? Integer.parseInt(matcher.group(1)) : -1;
-            } catch (NumberFormatException ignored) {
-                return -1;
-            }
-        }
-
-        public String getIdleTitle() {
-            String title = String.format(zeroNameFormat);
-            if (User32.INSTANCE.FindWindow(null, title) == null) {
-                return title;
-            } else {
-                for (int cur = 2; cur <= 1024 ; cur ++) {
-                    title = String.format(numberedNameFormat, cur);
-                    if (User32.INSTANCE.FindWindow(null, title) == null)
-                        return title;
-                }
-                throw new IllegalStateException("Failed to get idle title.");
-            }
-        }
     }
 }
