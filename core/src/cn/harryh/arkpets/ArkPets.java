@@ -99,7 +99,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 		hWndMine = HWndCtrlFactory.find(null, APP_TITLE);
 		hWndMine.setLayered(true);
 		if(config.window_style_topmost){
-			hWndMine.setTopMost(true);
+			hWndMine.setTopmost(true);
 		}
 		//hWndMine.setWindowExStyle(HWndCtrl.WS_EX_LAYERED | (config.window_style_topmost ? HWndCtrl.WS_EX_TOPMOST : 0));
 		promiseToolwindowStyle(1000);
@@ -385,7 +385,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 		}
 		if (minWindow == null || minWindow.isEmpty()) {
 			// Set as the top window if there is no peer.
-			minWindow = HWndCtrlFactory.getTopMost();
+			minWindow = HWndCtrlFactory.getTopmost();
 		}
 		if (plane != null) {
 			// Set barriers according to the vertical line.

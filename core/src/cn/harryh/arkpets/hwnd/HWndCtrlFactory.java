@@ -1,3 +1,6 @@
+/** Copyright (c) 2022-2024, Harry Huang, Litwak913
+ * At GPL-3.0 License
+ */
 package cn.harryh.arkpets.hwnd;
 
 import cn.harryh.arkpets.utils.Logger;
@@ -9,8 +12,9 @@ import java.util.List;
 
 
 public class HWndCtrlFactory {
-    private static WindowSystem platform;
     public static HWndCtrl<?> EMPTY;
+    private static WindowSystem PLATFORM;
+
     public enum WindowSystem {
         AUTO,
         USER32,
@@ -20,15 +24,16 @@ public class HWndCtrlFactory {
         QUARTZ,
         NULL
     }
-    public static WindowSystem detectWindowSystem(){
-        if(Platform.isWindows()){
+
+    public static WindowSystem detectWindowSystem() {
+        if (Platform.isWindows()) {
             return WindowSystem.USER32;
         } else if (Platform.isMac()) {
             return WindowSystem.QUARTZ;
         } else if (Platform.isLinux()) {
-            String desktop=System.getenv("XDG_CURRENT_DESKTOP");
-            String type=System.getenv("XDG_SESSION_TYPE");
-            if (desktop.equals("GNOME")){
+            String desktop = System.getenv("XDG_CURRENT_DESKTOP");
+            String type = System.getenv("XDG_SESSION_TYPE");
+            if (desktop.equals("GNOME")) {
                 return WindowSystem.MUTTER;
             } else if (desktop.equals("KDE")) {
                 return WindowSystem.KWIN;
@@ -39,30 +44,29 @@ public class HWndCtrlFactory {
         return WindowSystem.NULL;
     }
 
-    /**
-     * Init window system.
+    /** Init window system.
      */
-    public static void init(){
-        platform=detectWindowSystem();
-        Logger.info("System","Using "+platform.toString()+" Window System");
+    public static void init() {
+        PLATFORM = detectWindowSystem();
+        Logger.info("System", "Using " + PLATFORM.toString() + " Window System");
         //establish connection
-        switch (platform){
+        switch (PLATFORM) {
             case MUTTER -> {
                 //todo
             }
         }
-        EMPTY=create();
+        EMPTY = create();
     }
-    /**
-     * Find a window.
+
+    /** Finds a window.
      * @param className window's class name.
      * @param windowName window's title.
      * @return HWndCtrl
      */
-    public static HWndCtrl<?> find(String className, String windowName){
-        switch (platform){
+    public static HWndCtrl<?> find(String className, String windowName) {
+        switch (PLATFORM) {
             case USER32 -> {
-                return User32HWndCtrl.find(className,windowName);
+                return User32HWndCtrl.find(className, windowName);
             }
             default -> {
                 return new NullHWndCtrl();
@@ -70,12 +74,11 @@ public class HWndCtrlFactory {
         }
     }
 
-    /**
-     * Create empty HWndCtrl.
+    /** Create empty HWndCtrl.
      * @return empty HWndCtrl
      */
-    public static HWndCtrl<?> create(){
-        switch (platform){
+    public static HWndCtrl<?> create() {
+        switch (PLATFORM) {
             case USER32 -> {
                 return new User32HWndCtrl();
             }
@@ -84,31 +87,31 @@ public class HWndCtrlFactory {
             }
         }
     }
+
     /** Gets the current list of windows.
      * @param only_visible Whether exclude the invisible window.
      * @return An ArrayList consists of HWndCtrls.
      */
-    public static List<? extends HWndCtrl<?>> getWindowList(boolean only_visible){
-        switch (platform){
+    public static List<? extends HWndCtrl<?>> getWindowList(boolean only_visible) {
+        switch (PLATFORM) {
             case USER32 -> {
                 return User32HWndCtrl.getWindowList(only_visible);
             }
-            default-> {
+            default -> {
                 return new ArrayList<>();
             }
         }
     }
 
-    /**
-     * Gets the topmost window.
+    /** Gets the topmost window.
      * @return The topmost window's HWndCtrl.
      */
-    public static HWndCtrl<?> getTopMost(){
-        switch (platform){
+    public static HWndCtrl<?> getTopmost() {
+        switch (PLATFORM) {
             case USER32 -> {
-                return User32HWndCtrl.getTopMost();
+                return User32HWndCtrl.getTopmost();
             }
-            default-> {
+            default -> {
                 return new NullHWndCtrl();
             }
         }
@@ -117,26 +120,25 @@ public class HWndCtrlFactory {
     /** Gets a new HWndCtrl which contains the updated information of this window.
      * @return The up-to-dated HWndCtrl.
      */
-    public static HWndCtrl<?> update(HWndCtrl<?> old){
-        switch (platform){
+    public static HWndCtrl<?> update(HWndCtrl<?> old) {
+        switch (PLATFORM) {
             case USER32 -> {
                 return new User32HWndCtrl((WinDef.HWND) old.hWnd);
             }
-            default-> {
+            default -> {
                 return new NullHWndCtrl();
             }
         }
     }
 
-    /** Free all resources.
+    /** Frees all resources.
      */
-    public static void free(){
-        switch (platform){
+    public static void free() {
+        switch (PLATFORM) {
             case X11 -> {
                 //todo
             }
-            default-> {
-                return;
+            default -> {
             }
         }
     }

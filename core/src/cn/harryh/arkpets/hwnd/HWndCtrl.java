@@ -1,4 +1,4 @@
-/** Copyright (c) 2022-2024, Harry Huang
+/** Copyright (c) 2022-2024, Harry Huang, Litwak913
  * At GPL-3.0 License
  */
 package cn.harryh.arkpets.hwnd;
@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 
 public abstract class HWndCtrl<T> {
-    public final T hWnd; //Platform HWND
+    public final T hWnd; // Platform HWnd
     public final String windowText;
     public final int posTop;
     public final int posBottom;
@@ -16,7 +16,8 @@ public abstract class HWndCtrl<T> {
     public final int posRight;
     public final int windowWidth;
     public final int windowHeight;
-    public HWndCtrl(){
+
+    public HWndCtrl() {
         hWnd = null;
         windowText = "";
         posTop = 0;
@@ -26,6 +27,7 @@ public abstract class HWndCtrl<T> {
         windowWidth = 0;
         windowHeight = 0;
     }
+
     public HWndCtrl(T hWnd) {
         this.hWnd = hWnd;
         windowText = getWindowText(hWnd);
@@ -34,8 +36,8 @@ public abstract class HWndCtrl<T> {
         posBottom = rect.bottom;
         posLeft = rect.left;
         posRight = rect.right;
-        windowWidth = posRight-posLeft;
-        windowHeight = posBottom-posTop;
+        windowWidth = posRight - posLeft;
+        windowHeight = posBottom - posTop;
     }
 
     /** Returns window rect.
@@ -101,23 +103,20 @@ public abstract class HWndCtrl<T> {
      */
     public abstract void setWindowTransparent(boolean transparent);
 
-    /**
-     * Sets the window is a tool window.
-     * @param enable Whether the window is a tool window.
+    /** Sets the window's tool window style.
+     * @param enable Whether to enable the tool window style.
      */
     public abstract void setToolWindow(boolean enable);
 
-    /**
-     * Sets the window is layered.
-     * @param enable Whether the window is layered.
+    /** Sets the window's layered style.
+     * @param enable Whether to enable the window's layered style.
      */
     public abstract void setLayered(boolean enable);
 
-    /**
-     * Sets the window is topmost.
-     * @param enable Whether the window is topmost.
+    /** Sets the window's topmost style.
+     * @param enable Whether to enable the topmost style.
      */
-    public abstract void setTopMost(boolean enable);
+    public abstract void setTopmost(boolean enable);
 
     /** Sends a mouse event message to the window.
      * @param msg The window message value.
@@ -180,7 +179,7 @@ public abstract class HWndCtrl<T> {
             if (HWndCtrlFactory.find(null, title) == null) {
                 return title;
             } else {
-                for (int cur = 2; cur <= 1024 ; cur ++) {
+                for (int cur = 2; cur <= 1024; cur++) {
                     title = String.format(numberedNameFormat, cur);
                     if (HWndCtrlFactory.find(null, title) == null)
                         return title;
@@ -190,21 +189,24 @@ public abstract class HWndCtrl<T> {
         }
     }
 
-    public static class WindowRect{
+    public static class WindowRect {
         public int top;
         public int bottom;
         public int right;
         public int left;
-        public WindowRect(){}
-        public WindowRect(int x,int y,int h,int w){
-            this.top=y;
-            this.left=x;
-            this.bottom=y+h;
-            this.right=x+w;
+
+        public WindowRect() {
+        }
+
+        public WindowRect(int x, int y, int h, int w) {
+            this.top = y;
+            this.left = x;
+            this.bottom = y + h;
+            this.right = x + w;
         }
     }
 
-    public enum MouseEvent{
+    public enum MouseEvent {
         EMPTY,
         MOUSEMOVE,
         LBUTTONDOWN,

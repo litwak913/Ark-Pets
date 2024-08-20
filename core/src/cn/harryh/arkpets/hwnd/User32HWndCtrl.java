@@ -1,4 +1,4 @@
-/** Copyright (c) 2022-2024, Harry Huang
+/** Copyright (c) 2022-2024, Harry Huang, Litwak913
  * At GPL-3.0 License
  */
 package cn.harryh.arkpets.hwnd;
@@ -13,7 +13,8 @@ import com.sun.jna.platform.win32.WinUser;
 
 import java.util.ArrayList;
 
-public class User32HWndCtrl extends HWndCtrl<HWND>{
+
+public class User32HWndCtrl extends HWndCtrl<HWND> {
     public final Pointer windowPointer;
 
     public static final int WS_EX_TOPMOST       = 0x00000008;
@@ -42,13 +43,13 @@ public class User32HWndCtrl extends HWndCtrl<HWND>{
         windowPointer = getWindowIdx(hWnd);
     }
 
-    /** Find a window.
+    /** Finds a window.
      * @param className The class name of the window.
      * @param windowName The title of the window.
      */
     public static HWndCtrl<HWND> find(String className, String windowName) {
-        HWND hwnd=User32.INSTANCE.FindWindow(className, windowName);
-        if(hwnd!=null){
+        HWND hwnd = User32.INSTANCE.FindWindow(className, windowName);
+        if (hwnd != null) {
             return new User32HWndCtrl(hwnd);
         }
         return null;
@@ -68,29 +69,19 @@ public class User32HWndCtrl extends HWndCtrl<HWND>{
         windowPointer = null;
     }
 
-    /** Returns true if the handle is empty.
-     */
     public boolean isEmpty() {
         return hWnd == null;
     }
 
-    /** Returns true if the window is a foreground window now.
-     */
     public boolean isForeground() {
         if (isEmpty()) return false;
         return hWnd.equals(User32.INSTANCE.GetForegroundWindow());
     }
 
-    /** Returns true if the window is visible now.
-     */
     public boolean isVisible() {
         return visible(hWnd);
     }
 
-    /** Requests to close the window.
-     * @param timeout Timeout for waiting response (ms).
-     * @return true=success, false=failure.
-     */
     public boolean close(int timeout) {
         return User32.INSTANCE.SendMessageTimeout(hWnd, 0x10, null, null, timeout, WinUser.SMTO_NORMAL, null).intValue() == 0;
     }
@@ -104,8 +95,6 @@ public class User32HWndCtrl extends HWndCtrl<HWND>{
         return User32.INSTANCE.GetWindowLong(hWnd, WinUser.GWL_EXSTYLE);
     }
 
-    /** Sets the window as the foreground window.
-     */
     public void setForeground() {
         User32.INSTANCE.SetForegroundWindow(hWnd);
     }
@@ -129,21 +118,11 @@ public class User32HWndCtrl extends HWndCtrl<HWND>{
         User32.INSTANCE.SetWindowLong(hWnd, WinUser.GWL_EXSTYLE, newLong);
     }
 
-    /** Sets the window's position without activating the window.
-     * @param insertAfter The window to precede the positioned window in the Z order.
-     * @param x The new position of the left side of the window, in client coordinates.
-     * @param y The new position of the top of the window, in client coordinates.
-     * @param w The new width of the window, in pixels.
-     * @param h The new height of the window, in pixels.
-     */
     public void setWindowPosition(HWndCtrl<HWND> insertAfter, int x, int y, int w, int h) {
         if (isEmpty()) return;
         User32.INSTANCE.SetWindowPos(hWnd, insertAfter.hWnd, x, y, w, h, WinUser.SWP_NOACTIVATE);
     }
 
-    /** Sets the window's ability to be passed through.
-     * @param transparent Whether the window can be passed through.
-     */
     public void setWindowTransparent(boolean transparent) {
         if (isEmpty()) return;
         if (transparent)
@@ -152,10 +131,6 @@ public class User32HWndCtrl extends HWndCtrl<HWND>{
             setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_TRANSPARENT);
     }
 
-    /**
-     * Sets the window is a tool window.
-     * @param enable Whether the window is a tool window.
-     */
     public void setToolWindow(boolean enable) {
         if (isEmpty()) return;
         if (enable)
@@ -164,11 +139,7 @@ public class User32HWndCtrl extends HWndCtrl<HWND>{
             setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_TOOLWINDOW);
     }
 
-    /**
-     * Sets the window is layered.
-     * @param enable Whether the window is layered.
-     */
-    public void setLayered(boolean enable){
+    public void setLayered(boolean enable) {
         if (isEmpty()) return;
         if (enable)
             setWindowExStyle(getWindowExStyle() | User32HWndCtrl.WS_EX_LAYERED);
@@ -176,11 +147,7 @@ public class User32HWndCtrl extends HWndCtrl<HWND>{
             setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_LAYERED);
     }
 
-    /**
-     * Sets the window is topmost.
-     * @param enable Whether the window is topmost.
-     */
-    public void setTopMost(boolean enable){
+    public void setTopmost(boolean enable) {
         if (isEmpty()) return;
         if (enable)
             setWindowExStyle(getWindowExStyle() | User32HWndCtrl.WS_EX_TOPMOST);
@@ -188,13 +155,8 @@ public class User32HWndCtrl extends HWndCtrl<HWND>{
             setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_TOPMOST);
     }
 
-    /** Sends a mouse event message to the window.
-     * @param msg The window message value.
-     * @param x The X-axis coordinate, related to the left border of the window.
-     * @param y The Y-axis coordinate, related to the top border of the window.
-     */
     public void sendMouseEvent(MouseEvent msg, int x, int y) {
-        int wmsg=switch (msg){
+        int wmsg = switch (msg) {
             case MOUSEMOVE -> WM_MOUSEMOVE;
             case LBUTTONDOWN -> WM_LBUTTONDOWN;
             case LBUTTONUP -> WM_LBUTTONUP;
@@ -244,11 +206,10 @@ public class User32HWndCtrl extends HWndCtrl<HWND>{
         return windowList;
     }
 
-    /**
-     * Gets the topmost window.
+    /** Gets the topmost window.
      * @return The topmost window's HWndCtrl.
      */
-    public static User32HWndCtrl getTopMost(){
+    public static User32HWndCtrl getTopmost() {
         return new User32HWndCtrl(-1);
     }
 
@@ -259,7 +220,7 @@ public class User32HWndCtrl extends HWndCtrl<HWND>{
             WindowRect rect = getRect(hWnd);
             if (rect.top == rect.bottom || rect.left == rect.right)
                 return false;
-        } catch(Exception e) {
+        } catch (Exception e) {
             return false;
         }
         return true;
@@ -278,11 +239,11 @@ public class User32HWndCtrl extends HWndCtrl<HWND>{
     private static WindowRect getRect(HWND hWnd) {
         RECT rect = new RECT();
         User32.INSTANCE.GetWindowRect(hWnd, rect);
-        WindowRect newRect=new WindowRect();
-        newRect.top= rect.top;
-        newRect.bottom= rect.bottom;
-        newRect.left= rect.left;
-        newRect.right= rect.right;
+        WindowRect newRect = new WindowRect();
+        newRect.top = rect.top;
+        newRect.bottom = rect.bottom;
+        newRect.left = rect.left;
+        newRect.right = rect.right;
         return newRect;
     }
 
