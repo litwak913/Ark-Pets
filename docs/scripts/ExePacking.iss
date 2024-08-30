@@ -4,7 +4,7 @@
 ; Download Inno Setup: https://jrsoftware.org/isdl.php
 
 #define MyAppName "ArkPets"
-#define MyAppVersion "3.2.0"
+#define MyAppVersion "3.2.1"
 #define MyAppPublisher "Harry Huang"
 #define MyAppURL "https://arkpets.harryh.cn/"
 
@@ -31,6 +31,7 @@ SetupIconFile       =..\..\assets\icons\icon.ico
 SolidCompression    =yes
 UninstallDisplayIcon={app}\{#MyAppName}.ico
 WizardStyle         =modern
+ChangesEnvironment  =true
 
 [Languages]
 Name: "chinese_simplified";  MessagesFile: "ChineseSimplified.isl"
@@ -38,8 +39,66 @@ Name: "chinese_traditional";  MessagesFile: "ChineseTraditional.isl"
 Name: "english";  MessagesFile: "compiler:Default.isl"
 Name: "japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
 
+[Code]
+const EnvironmentKey = 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment';
+
+procedure EnvAddPath(Path: string);
+var
+    Paths: string;
+begin
+    { Retrieve current path (use empty string if entry not exists) }
+    if not RegQueryStringValue(HKEY_LOCAL_MACHINE, EnvironmentKey, 'Path', Paths)
+    then Paths := '';
+
+    { Skip if string already found in path }
+    if Pos(';' + Uppercase(Path) + ';', ';' + Uppercase(Paths) + ';') > 0 then exit;
+
+    { App string to the end of the path variable }
+    Paths := Paths + ';'+ Path +';'
+
+    { Overwrite (or create if missing) path environment variable }
+    if RegWriteStringValue(HKEY_LOCAL_MACHINE, EnvironmentKey, 'Path', Paths)
+    then Log(Format('The [%s] added to PATH: [%s]', [Path, Paths]))
+    else Log(Format('Error while adding the [%s] to PATH: [%s]', [Path, Paths]));
+end;
+
+procedure EnvRemovePath(Path: string);
+var
+    Paths: string;
+    P: Integer;
+begin
+    { Skip if registry entry not exists }
+    if not RegQueryStringValue(HKEY_LOCAL_MACHINE, EnvironmentKey, 'Path', Paths) then
+        exit;
+
+    { Skip if string not found in path }
+    P := Pos(';' + Uppercase(Path) + ';', ';' + Uppercase(Paths) + ';');
+    if P = 0 then exit;
+
+    { Update path variable }
+    Delete(Paths, P - 1, Length(Path) + 1);
+
+    { Overwrite path environment variable }
+    if RegWriteStringValue(HKEY_LOCAL_MACHINE, EnvironmentKey, 'Path', Paths)
+    then Log(Format('The [%s] removed from PATH: [%s]', [Path, Paths]))
+    else Log(Format('Error while removing the [%s] from PATH: [%s]', [Path, Paths]));
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+    if CurStep = ssPostInstall
+    then EnvAddPath(ExpandConstant('{app}') + '\app');
+end;
+
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+begin
+    if CurUninstallStep = usPostUninstall
+    then EnvRemovePath(ExpandConstant('{app}') + '\app');
+end;
+
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
+; Name: envPath; Description: "Add to PATH variable"
 
 [Files]
 Source: "..\..\desktop\build\jpackage\{#MyAppName}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
