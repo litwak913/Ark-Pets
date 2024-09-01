@@ -80,10 +80,10 @@ public class ArkChar {
                 binary.setScale(scale);
                 skeletonData = binary.readSkeletonData(Gdx.files.internal(path2skel));
             } catch (Exception e) {
-                Logger.warn("Character", "Failed to load skeleton,trying load as json");
-                SkeletonJson json=new SkeletonJson(atlas);
+                Logger.warn("Character", "Failed to load skeleton, trying load as json");
+                SkeletonJson json = new SkeletonJson(atlas);
                 json.setScale(scale);
-                skeletonData=json.readSkeletonData(Gdx.files.internal(path2skel));
+                skeletonData = json.readSkeletonData(Gdx.files.internal(path2skel));
             }
         } catch (SerializationException | GdxRuntimeException e) {
             Logger.error("Character", "The model asset may be inaccessible, details see below.", e);
