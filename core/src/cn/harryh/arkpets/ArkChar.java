@@ -75,9 +75,16 @@ public class ArkChar {
             // Load atlas
             TextureAtlas atlas = new TextureAtlas(Gdx.files.internal(path2atlas));
             // Load skel (use SkeletonJson instead of SkeletonBinary if the file type is JSON)
-            SkeletonBinary binary = new SkeletonBinary(atlas);
-            binary.setScale(scale);
-            skeletonData = binary.readSkeletonData(Gdx.files.internal(path2skel));
+            try {
+                SkeletonBinary binary = new SkeletonBinary(atlas);
+                binary.setScale(scale);
+                skeletonData = binary.readSkeletonData(Gdx.files.internal(path2skel));
+            } catch (Exception e) {
+                Logger.warn("Character", "Failed to load skeleton,trying load as json");
+                SkeletonJson json=new SkeletonJson(atlas);
+                json.setScale(scale);
+                skeletonData=json.readSkeletonData(Gdx.files.internal(path2skel));
+            }
         } catch (SerializationException | GdxRuntimeException e) {
             Logger.error("Character", "The model asset may be inaccessible, details see below.", e);
             throw new RuntimeException("Launch ArkPets failed, the model asset may be inaccessible.");
