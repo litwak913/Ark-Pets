@@ -180,7 +180,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
         } catch (FileNotFoundException e) {
             Logger.warn("ModelManager", "Failed to initialize model dataset due to file not found. (" + e.getMessage() + ")");
             if (doPopNotice) {
-                JFXDialog dialog = GuiPrefabs.DialogUtil.createCommonDialog(app.root,
+                JFXDialog dialog = GuiPrefabs.DialogUtil.createCommonDialog(app.body,
                         GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_WARNING_ALT, GuiPrefabs.Colors.COLOR_WARNING),
                         "模型载入失败",
                         "模型未成功载入：未找到数据集。",
@@ -191,7 +191,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
         } catch (ModelsDataset.DatasetKeyException e) {
             Logger.warn("ModelManager", "Failed to initialize model dataset due to dataset parsing error. (" + e.getMessage() + ")");
             if (doPopNotice)
-                GuiPrefabs.DialogUtil.createCommonDialog(app.root,
+                GuiPrefabs.DialogUtil.createCommonDialog(app.body,
                         GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_WARNING_ALT, GuiPrefabs.Colors.COLOR_WARNING),
                         "模型载入失败",
                         "模型未成功载入：数据集解析失败。",
@@ -200,7 +200,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
         } catch (IOException e) {
             Logger.error("ModelManager", "Failed to initialize model dataset due to unknown reasons, details see below.", e);
             if (doPopNotice)
-                GuiPrefabs.DialogUtil.createCommonDialog(app.root,
+                GuiPrefabs.DialogUtil.createCommonDialog(app.body,
                         GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_WARNING_ALT, GuiPrefabs.Colors.COLOR_WARNING),
                         "模型载入失败",
                         "模型未成功载入：发生意外错误。",
@@ -289,7 +289,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
         EventHandler<ActionEvent> modelFetchEventHandler = e -> {
             /* Foreground fetch models */
             // Go to [Step 1/3]:
-            new DownloadModelsTask(app.root, GuiTask.GuiTaskStyle.COMMON) {
+            new DownloadModelsTask(app.body, GuiTask.GuiTaskStyle.COMMON) {
                 @Override
                 protected void onSucceeded(boolean result){
                     // Go to [Step 2/3]:
@@ -318,7 +318,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
             /* Foreground check models update */
             if (!app.modelsModule.initModelsDataset(true))
                 return;
-            new CheckModelUpdateTask(app.root, GuiTask.GuiTaskStyle.COMMON).start();
+            new CheckModelUpdateTask(app.body, GuiTask.GuiTaskStyle.COMMON).start();
         });
 
         modelFetch.setOnAction(modelFetchEventHandler);
@@ -328,7 +328,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
             /* Foreground verify models */
             if (!app.modelsModule.initModelsDataset(true))
                 return;
-            new VerifyModelsTask(app.root, GuiTask.GuiTaskStyle.COMMON, app.modelsDataset).start();
+            new VerifyModelsTask(app.body, GuiTask.GuiTaskStyle.COMMON, app.modelsDataset).start();
         });
 
         modelImport.setOnAction(e -> {
@@ -344,7 +344,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
             if (zipFile != null && zipFile.isFile()) {
                 Logger.info("ModelManager", "Importing zip file: " + zipFile);
                 // Go to [Step 1/2]:
-                new UnzipModelsTask(app.root, GuiTask.GuiTaskStyle.STRICT, zipFile.getPath()) {
+                new UnzipModelsTask(app.body, GuiTask.GuiTaskStyle.STRICT, zipFile.getPath()) {
                     @Override
                     protected void onSucceeded(boolean result) {
                         // Go to [Step 2/2]:
@@ -373,7 +373,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
                 contents.put(fileModelsDataPath, fileModelsZipName + "/" + fileModelsDataPath);
                 for (File dir : app.modelsDataset.storageDirectory.values())
                     contents.put(dir.toString(), fileModelsZipName + "/" + dir);
-                new ZipTask(app.root, GuiTask.GuiTaskStyle.STRICT, zipFile.toString(), contents).start();
+                new ZipTask(app.body, GuiTask.GuiTaskStyle.STRICT, zipFile.toString(), contents).start();
             }
         });
 
@@ -439,7 +439,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
                     modelCellList = new ArrayList<>();
                     assetItemList = new AssetItemGroup();
                     if (doPopNotice)
-                        GuiPrefabs.DialogUtil.createCommonDialog(app.root,
+                        GuiPrefabs.DialogUtil.createCommonDialog(app.body,
                                 GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_WARNING_ALT, GuiPrefabs.Colors.COLOR_WARNING),
                                 "模型载入失败",
                                 "模型未成功载入：读取模型列表失败。",
@@ -582,7 +582,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
         if (app.modelsDataset == null) {
             // Not loaded:
             if (doPopNotice)
-                GuiPrefabs.DialogUtil.createCommonDialog(app.root,
+                GuiPrefabs.DialogUtil.createCommonDialog(app.body,
                         GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_WARNING_ALT, GuiPrefabs.Colors.COLOR_WARNING),
                         "未能加载模型",
                         "请确保模型加载成功后再进行此操作。",

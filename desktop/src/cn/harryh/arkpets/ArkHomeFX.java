@@ -37,6 +37,7 @@ public class ArkHomeFX extends Application {
     public ArkConfig config;
     public ModelsDataset modelsDataset;
     public StackPane root;
+    public StackPane body;
 
     public RootModule rootModule;
     public ModelsModule modelsModule;
@@ -58,6 +59,7 @@ public class ArkHomeFX extends Application {
         fxml0.initializeWith(this);
         root = (StackPane)fxml0.content();
         rootModule = (RootModule)fxml0.controller();
+        body = rootModule.body;
 
         // Setup scene and primary stage.
         Logger.info("Launcher", "Creating main scene");
