@@ -340,7 +340,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
             fileChooser.getExtensionFilters().addAll(extensionFilter1, extensionFilter2);
             fileChooser.setSelectedExtensionFilter(extensionFilter2);
             // Handle the chosen file
-            File zipFile = fileChooser.showOpenDialog(app.root.getScene().getWindow());
+            File zipFile = fileChooser.showOpenDialog(app.getWindow());
             if (zipFile != null && zipFile.isFile()) {
                 Logger.info("ModelManager", "Importing zip file: " + zipFile);
                 // Go to [Step 1/2]:
@@ -366,7 +366,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archives", "*.zip"));
             fileChooser.setInitialFileName(fileModelsZipName + ".zip");
             // Handle the chosen file
-            File zipFile = fileChooser.showSaveDialog(app.root.getScene().getWindow());
+            File zipFile = fileChooser.showSaveDialog(app.getWindow());
             if (zipFile != null) {
                 Logger.info("ModelManager", "Exporting zip file: " + zipFile);
                 HashMap<String, String> contents = new java.util.HashMap<>();

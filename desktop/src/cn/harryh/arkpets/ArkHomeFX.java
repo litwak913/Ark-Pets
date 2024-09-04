@@ -22,6 +22,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import javafx.util.Duration;
 
 import java.util.Objects;
@@ -36,7 +37,6 @@ public class ArkHomeFX extends Application {
     public Stage stage;
     public ArkConfig config;
     public ModelsDataset modelsDataset;
-    public StackPane root;
     public StackPane body;
 
     public RootModule rootModule;
@@ -57,13 +57,12 @@ public class ArkHomeFX extends Application {
         // Load FXML for root node.
         LoadFXMLResult<ArkHomeFX> fxml0 = FXMLHelper.loadFXML(getClass().getResource("/UI/RootModule.fxml"));
         fxml0.initializeWith(this);
-        root = (StackPane)fxml0.content();
         rootModule = (RootModule)fxml0.controller();
         body = rootModule.body;
 
         // Setup scene and primary stage.
         Logger.info("Launcher", "Creating main scene");
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(rootModule.root);
         scene.getStylesheets().setAll(Objects.requireNonNull(getClass().getResource("/UI/Main.css")).toExternalForm());
         stage.getIcons().setAll(new Image(Objects.requireNonNull(getClass().getResource(iconFilePng)).toExternalForm()));
         stage.initStyle(StageStyle.UNDECORATED);
@@ -138,5 +137,9 @@ public class ArkHomeFX extends Application {
 
     public void popLoading(EventHandler<ActionEvent> handler) {
         rootModule.popLoading(handler);
+    }
+
+    public Window getWindow() {
+        return rootModule.root.getScene().getWindow();
     }
 }

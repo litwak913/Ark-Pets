@@ -45,7 +45,7 @@ public final class RootModule implements Controller<ArkHomeFX> {
     public GuiPrefabs.PeerNodeComposer moduleWrapperComposer;
 
     @FXML
-    private StackPane root;
+    public StackPane root;
     @FXML
     public StackPane body;
     @FXML
