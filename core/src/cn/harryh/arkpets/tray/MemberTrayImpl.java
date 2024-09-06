@@ -19,7 +19,7 @@ import java.awt.geom.AffineTransform;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static cn.harryh.arkpets.Const.easingDuration;
+import static cn.harryh.arkpets.Const.durationNormal;
 import static cn.harryh.arkpets.Const.iconFilePng;
 
 
@@ -100,7 +100,7 @@ public class MemberTrayImpl extends MemberTray {
             public void run() {
                 Gdx.app.exit();
             }
-        }, (int)(easingDuration * 1000));
+        }, (int)durationNormal.toSeconds());
     }
 
     @Override

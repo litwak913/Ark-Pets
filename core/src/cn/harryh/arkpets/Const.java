@@ -49,7 +49,6 @@ public final class Const {
     public static final float droppedThreshold      = 10f;
 
     // Duration presets
-    public static final float easingDuration    = 0.3f;
     public static final Duration durationFast   = new Duration(150);
     public static final Duration durationNormal = new Duration(300);
 

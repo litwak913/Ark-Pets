@@ -89,13 +89,13 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 
 		// 4.Window position setup
 		getHWndLoopCtrl = new LoopCtrl(1f / config.display_fps * 4);
-		windowPosition = new TransitionVector2(TernaryFunction.EASE_OUT_CUBIC, easingDuration);
+		windowPosition = new TransitionVector2(TernaryFunction.EASE_OUT_CUBIC, (float)durationNormal.toSeconds());
 		windowPosition.reset(plane.getX(), - (height + plane.getY()) + offsetY);
 		windowPosition.setToEnd();
 		setWindowPos();
 
 		// 5.Window style setup
-		windowAlpha = new TransitionFloat(TernaryFunction.EASE_OUT_CUBIC, easingDuration);
+		windowAlpha = new TransitionFloat(TernaryFunction.EASE_OUT_CUBIC, (float)durationNormal.toSeconds());
 		windowAlpha.reset(1f);
 		hWndMine = HWndCtrlFactory.find(null, APP_TITLE);
 		hWndMine.setLayered(true);

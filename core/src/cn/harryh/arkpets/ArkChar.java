@@ -70,9 +70,9 @@ public class ArkChar {
         shader2 = getShader(pass2VShader, pass2FShader);
         Logger.debug("Shader", "Shader program compiled");
         // 2.Geometry setup
-        position = new TransitionVector3(TernaryFunction.EASE_OUT_CUBIC, easingDuration);
-        offsetY = new TransitionFloat(TernaryFunction.EASE_OUT_CUBIC, easingDuration);
-        outlineWidth = new TransitionFloat(TernaryFunction.EASE_OUT_CUBIC, easingDuration);
+        position = new TransitionVector3(TernaryFunction.EASE_OUT_CUBIC, (float)durationNormal.toSeconds());
+        offsetY = new TransitionFloat(TernaryFunction.EASE_OUT_CUBIC, (float)durationNormal.toSeconds());
+        outlineWidth = new TransitionFloat(TernaryFunction.EASE_OUT_CUBIC, (float)durationFast.toSeconds());
         // 3.Skeleton setup
         SkeletonData skeletonData;
         try {
@@ -105,7 +105,7 @@ public class ArkChar {
         for (AnimClip i : animList)
             for (AnimClip j : animList)
                 if (!i.fullName.equals(j.fullName))
-                    asd.setMix(i.fullName, j.fullName, easingDuration);
+                    asd.setMix(i.fullName, j.fullName, (float)durationNormal.toSeconds());
         // 5.Animation state setup
         animationState = new AnimationState(asd);
         animationState.apply(skeleton);
