@@ -38,6 +38,8 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
     @FXML
     private JFXComboBox<NamedItem<Integer>> configCanvasSize;
     @FXML
+    private JFXComboBox<NamedItem<Integer>> configRenderOutline;
+    @FXML
     private JFXCheckBox configWindowTopmost;
     @FXML
     private JFXComboBox<String> configLoggingLevel;
@@ -128,7 +130,16 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
                 };
             }
         };
-
+        new ComboBoxSetup<>(configRenderOutline).setItems(new NamedItem<>("始终开启", ArkConfig.RenderOutline.ALWAYS.ordinal()),
+                new NamedItem<>("处于前台时", ArkConfig.RenderOutline.FOCUSED.ordinal()),
+                new NamedItem<>("拖拽时", ArkConfig.RenderOutline.DRAGGING.ordinal()),
+                new NamedItem<>("点击时", ArkConfig.RenderOutline.TOUCHING.ordinal()),
+                new NamedItem<>("关闭", ArkConfig.RenderOutline.NEVER.ordinal()))
+                .selectValue(app.config.display_render_outline, "未知")
+                .setOnNonNullValueUpdated((observable, oldValue, newValue) -> {
+                    app.config.display_render_outline = newValue.value();
+                    app.config.save();
+                });
         configWindowTopmost.setSelected(app.config.window_style_topmost);
         configWindowTopmost.setOnAction(e -> {
             app.config.window_style_topmost = configWindowTopmost.isSelected();

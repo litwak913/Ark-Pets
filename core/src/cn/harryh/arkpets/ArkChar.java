@@ -39,14 +39,16 @@ public class ArkChar {
 
     private final TwoColorPolygonBatch batch;
     private Texture bgTexture;
-    private final AnimComposer composer;
     private final TransitionFloat offsetY;
+    private final TransitionFloat outlineWidth;
 
     private final ShaderProgram shader1;
+    private final ShaderProgram shader2;
     private final Skeleton skeleton;
     private final SkeletonRenderer renderer;
-    private final AnimationState animationState;
 
+    private final AnimComposer composer;
+    private final AnimationState animationState;
     protected final AnimClipGroup animList;
     protected final HashMap<AnimStage, Insert> stageInsertMap;
 
@@ -65,10 +67,12 @@ public class ArkChar {
         otherwise you may get a corrupted rendering result. */
         renderer.setPremultipliedAlpha(false);
         shader1 = getShader(pass1VShader, pass1FShader);
+        shader2 = getShader(pass2VShader, pass2FShader);
         Logger.debug("Shader", "Shader program compiled");
         // 2.Geometry setup
         position = new TransitionVector3(TernaryFunction.EASE_OUT_CUBIC, easingDuration);
         offsetY = new TransitionFloat(TernaryFunction.EASE_OUT_CUBIC, easingDuration);
+        outlineWidth = new TransitionFloat(TernaryFunction.EASE_OUT_CUBIC, easingDuration);
         // 3.Skeleton setup
         SkeletonData skeletonData;
         try {
@@ -153,6 +157,13 @@ public class ArkChar {
         return composer.offer(animData);
     }
 
+    /** Requests to set the outline width of the character.
+     * @param width The outline width in pixel.
+     */
+    public void setOutlineWidth(float width) {
+        outlineWidth.reset(width);
+    }
+
     /** Get the animation playing.
      * @return The animation data.
      */
@@ -191,6 +202,7 @@ public class ArkChar {
         position.reset(camera.getWidth() >> 1, position.end().y, position.end().z);
         position.addProgress(Gdx.graphics.getDeltaTime());
         offsetY.addProgress(Gdx.graphics.getDeltaTime());
+        outlineWidth.addProgress(Gdx.graphics.getDeltaTime());
         skeleton.setPosition(position.now().x, position.now().y + offsetY.now());
         skeleton.setScaleX(position.now().z);
         skeleton.updateWorldTransform();
@@ -213,6 +225,10 @@ public class ArkChar {
         fbo.end();
         // Render Pass 2: Render the outline
         Texture passedTexture = fbo.getColorBufferTexture();
+        shader2.bind();
+        shader2.setUniformf("u_outlineColor", 1f, 1f, 0f);
+        shader2.setUniformf("u_outlineWidth", outlineWidth.now());
+        batch.setShader(shader2);
         batch.begin();
         batch.draw(passedTexture,
                 0, 0, 0, 0, camera.getWidth(), camera.getHeight(),
@@ -220,6 +236,7 @@ public class ArkChar {
                 0, 0, passedTexture.getWidth(), passedTexture.getHeight(),
                 false, true);
         batch.end();
+        batch.setShader(null);
     }
 
     private ShaderProgram getShader(String path2vertex, String path2fragment) {

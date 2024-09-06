@@ -47,6 +47,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 	private int width; // Window Real Width
 	private int height; // Window Real Height
 	private int offsetY = 0;
+	private boolean isFocused = false;
 	private boolean isToolwindowStyle = false;
 	private boolean isAlwaysTransparent = false;
 
@@ -150,6 +151,14 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 			hWndMine.setWindowAlpha(windowAlpha.now());
 		}
 		promiseToolwindowStyle(1);
+
+		// 4.Outline.
+		ArkConfig.RenderOutline renderOutline = ArkConfig.RenderOutline.from(config.display_render_outline);
+		cha.setOutlineWidth(renderOutline == ArkConfig.RenderOutline.ALWAYS ||
+				mouseStatus.mouseDown && renderOutline == ArkConfig.RenderOutline.TOUCHING ||
+				isFocused && renderOutline == ArkConfig.RenderOutline.FOCUSED ||
+				mouseStatus.dragging && renderOutline == ArkConfig.RenderOutline.DRAGGING
+				? outlineWidthMax : 0f);
 	}
 
 	@Override
@@ -194,6 +203,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		Logger.debug("Input", "Click+ Btn " + button +" @ " + screenX + ", " + screenY);
 		if (pointer <= 0) {
+			mouseStatus.mouseDown = true;
 			mouseStatus.updatePosition(screenX, screenY, button);
 			if (!isMouseAtSolidPixel()) {
 				// Transfer mouse event
@@ -242,6 +252,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		Logger.debug("Input", "Click- Btn " + button +" @ " + screenX + ", " + screenY);
 		if (pointer <= 0) {
+			mouseStatus.mouseDown = false;
 			mouseStatus.updatePosition(screenX, screenY, button);
 			if (mouseStatus.dragging) {
 				// Update the z-axis of the character
@@ -321,6 +332,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 			HWndCtrl<?> new_hwnd_topmost = refreshWindowIndex();
 			hWndTopmost = new_hwnd_topmost != hWndTopmost ? new_hwnd_topmost : hWndTopmost;
 			hWndMine.setWindowTransparent(isAlwaysTransparent);
+			isFocused = hWndMine.isForeground();
 		}
 		hWndMine.setWindowPosition((HWndCtrl)hWndTopmost, (int)windowPosition.now().x, (int)windowPosition.now().y, width, height);
 	}
@@ -493,6 +505,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 		private int button = 0;
 		private int intentionX = 0;
 		private boolean dragging = false;
+		private boolean mouseDown = false;
 
 		public MouseStatus() {
 		}

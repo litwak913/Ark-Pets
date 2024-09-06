@@ -40,6 +40,7 @@ public final class Const {
     public static final int canvasReserveLength = 80;
     public static final int canvasMaxSize       = 1080;
     public static final float skelBaseScale     = 0.3f;
+    public static final float outlineWidthMax   = 2f;
 
     // Behavior presets
     public static final int behaviorBaseWeight      = 320;
@@ -62,6 +63,8 @@ public final class Const {
     public static final String iconFilePng      = "/icons/icon.png";
     public static final String pass1VShader     = "shaders/TCPBVertex.glsl";
     public static final String pass1FShader     = "shaders/TCPBFragment.glsl";
+    public static final String pass2VShader     = "shaders/TCPBVertex.glsl";
+    public static final String pass2FShader     = "shaders/OutlineFragment.glsl";
     public static final String startupTarget    = "ArkPets.exe";
     public static final String startUpScript    = "ArkPetsStartupService.vbs";
 
