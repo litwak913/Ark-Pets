@@ -7,7 +7,7 @@
    <img alt="ArkPets icon" width="64" src="https://raw.githubusercontent.com/isHarryh/Ark-Pets/v3.x/assets/icons/icon.png"/>
    <p>
       Arknights Desktop Pets | 明日方舟桌宠 <br>
-      <code><b> v3.2 </b></code>
+      <code><b> v3.3 </b></code>
    </p>
    <p>
       <img alt="GitHub Top Language" src="https://img.shields.io/github/languages/top/isHarryh/Ark-Pets?label=Java">
@@ -73,7 +73,6 @@
 - 国际化
 - 支持干员语音功能
 - 全面更新依赖库的版本
-- 覆写默认着色器和光照系统
 - 支持透明模式等配置的记忆
 
 ### 相关文档

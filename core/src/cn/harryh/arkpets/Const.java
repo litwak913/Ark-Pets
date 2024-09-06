@@ -19,7 +19,7 @@ import java.util.Objects;
  */
 public final class Const {
     // App version
-    public static final Version appVersion              = new Version(3, 2, 0);
+    public static final Version appVersion              = new Version(3, 3, 0);
     public static final Version datasetLowestVersion    = new Version(2, 2, 0);
 
     // App name
