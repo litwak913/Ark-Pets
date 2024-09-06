@@ -60,6 +60,8 @@ public final class Const {
     public static final String configExternal   = "ArkPetsConfig.json";
     public static final String configInternal   = "/ArkPetsConfigDefault.json";
     public static final String iconFilePng      = "/icons/icon.png";
+    public static final String pass1VShader     = "shaders/TCPBVertex.glsl";
+    public static final String pass1FShader     = "shaders/TCPBFragment.glsl";
     public static final String startupTarget    = "ArkPets.exe";
     public static final String startUpScript    = "ArkPetsStartupService.vbs";
 

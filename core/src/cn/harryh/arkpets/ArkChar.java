@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.SerializationException;
@@ -41,6 +42,7 @@ public class ArkChar {
     private final AnimComposer composer;
     private final TransitionFloat offsetY;
 
+    private final ShaderProgram shader1;
     private final Skeleton skeleton;
     private final SkeletonRenderer renderer;
     private final AnimationState animationState;
@@ -62,6 +64,8 @@ public class ArkChar {
         /* Pre-multiplied alpha shouldn't be applied to models released in Arknights 2.1.41 or later,
         otherwise you may get a corrupted rendering result. */
         renderer.setPremultipliedAlpha(false);
+        shader1 = getShader(pass1VShader, pass1FShader);
+        Logger.debug("Shader", "Shader program compiled");
         // 2.Geometry setup
         position = new TransitionVector3(TernaryFunction.EASE_OUT_CUBIC, easingDuration);
         offsetY = new TransitionFloat(TernaryFunction.EASE_OUT_CUBIC, easingDuration);
@@ -196,11 +200,37 @@ public class ArkChar {
         // Reset the canvas
         ScreenUtils.clear(0, 0, 0, 0, true);
         batch.getProjectionMatrix().set(camera.combined);
-        // Render the skeleton
+        // Render Pass 1: Render the skeleton
+        FrameBuffer fbo = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+        fbo.begin();
+        shader1.bind();
+        batch.setShader(shader1);
         batch.begin();
         batch.draw(bgTexture, 0, 0);
         renderer.draw(batch, skeleton);
         batch.end();
+        batch.setShader(null);
+        fbo.end();
+        // Render Pass 2: Render the outline
+        Texture passedTexture = fbo.getColorBufferTexture();
+        batch.begin();
+        batch.draw(passedTexture,
+                0, 0, 0, 0, camera.getWidth(), camera.getHeight(),
+                1, 1, 0,
+                0, 0, passedTexture.getWidth(), passedTexture.getHeight(),
+                false, true);
+        batch.end();
+    }
+
+    private ShaderProgram getShader(String path2vertex, String path2fragment) {
+        ShaderProgram shader = new ShaderProgram(Gdx.files.internal(path2vertex), Gdx.files.internal(path2fragment));
+        if (!shader.isCompiled()) {
+            Logger.error("Shader", "Shader program failed to compile.");
+            Logger.error("Shader", "Shader source: " + path2vertex + " & " + path2fragment);
+            Logger.error("Shader", "Shader log: " + shader.getLog());
+            throw new RuntimeException("Launch ArkPets failed, failed to compile shaders.");
+        }
+        return shader;
     }
 
     private void adjustCanvas(AnimClipGroup animClips, int fittingSamples) {
