@@ -132,8 +132,8 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
         };
         new ComboBoxSetup<>(configRenderOutline).setItems(new NamedItem<>("始终开启", ArkConfig.RenderOutline.ALWAYS.ordinal()),
                 new NamedItem<>("处于前台时", ArkConfig.RenderOutline.FOCUSED.ordinal()),
+                new NamedItem<>("点击时", ArkConfig.RenderOutline.PRESSING.ordinal()),
                 new NamedItem<>("拖拽时", ArkConfig.RenderOutline.DRAGGING.ordinal()),
-                new NamedItem<>("点击时", ArkConfig.RenderOutline.TOUCHING.ordinal()),
                 new NamedItem<>("关闭", ArkConfig.RenderOutline.NEVER.ordinal()))
                 .selectValue(app.config.display_render_outline, "未知")
                 .setOnNonNullValueUpdated((observable, oldValue, newValue) -> {

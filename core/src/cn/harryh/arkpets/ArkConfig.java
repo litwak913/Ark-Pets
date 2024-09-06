@@ -62,7 +62,7 @@ public class ArkConfig implements Serializable {
     public int          display_margin_bottom;
     /** @since ArkPets 2.1 */ @JSONField(defaultValue = "true")
     public boolean      display_multi_monitors;
-    /** @since ArkPets 3.3 */ @JSONField(defaultValue = "2")
+    /** @since ArkPets 3.3 */ @JSONField(defaultValue = "1")
     public int          display_render_outline;
     /** @since ArkPets 1.0 */ @JSONField(defaultValue = "1.0")
     public float        display_scale;
@@ -156,8 +156,8 @@ public class ArkConfig implements Serializable {
      */
     public enum RenderOutline {
         NEVER,
-        TOUCHING,
         DRAGGING,
+        PRESSING,
         FOCUSED,
         _RESERVED,
         ALWAYS;

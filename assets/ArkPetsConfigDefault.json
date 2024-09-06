@@ -11,6 +11,7 @@
     "display_fps":30,
     "display_margin_bottom":0,
     "display_multi_monitors":true,
+    "display_render_outline":1,
     "display_scale":1.0,
     "initial_relative_position":[0.2,0.2],
     "launcher_solid_exit":true,
