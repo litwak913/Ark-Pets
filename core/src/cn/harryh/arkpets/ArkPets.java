@@ -44,8 +44,6 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 
 	private final String APP_TITLE;
 	private final MouseStatus mouseStatus = new MouseStatus();
-	private int width; // Window Real Width
-	private int height; // Window Real Height
 	private int offsetY = 0;
 	private boolean isFocused = false;
 	private boolean isToolwindowStyle = false;
@@ -66,31 +64,29 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 
 		// 2.Character setup
 		Logger.info("App", "Using model asset \"" + config.character_asset + "\"");
-		cha = new ArkChar(config, skelBaseScale);
+		cha = new ArkChar(config, config.display_scale);
 		behavior = new GeneralBehavior(config, cha.animList);
 		cha.adjustCanvas(behavior.defaultAnim().animClip().stage);
 		cha.setAnimation(behavior.defaultAnim());
 		Logger.info("Animation", "Available animation stages " + behavior.getStages());
 
 		// 3.Plane setup
-		width = (int)(config.display_scale * cha.camera.getWidth());
-		height = (int)(config.display_scale * cha.camera.getHeight());
 		plane = new Plane();
 		plane.setGravity(config.physic_gravity_acc);
 		plane.setResilience(0);
 		plane.setFrict(config.physic_air_friction_acc, config.physic_static_friction_acc);
-		plane.setObjSize(width, height);
+		plane.setObjSize(cha.camera.getWidth(), cha.camera.getHeight());
 		plane.setSpeedLimit(config.physic_speed_limit_x, config.physic_speed_limit_y);
 		ArkConfig.Monitor primaryMonitor = refreshMonitorInfo();
 		plane.changePosition(0,
-				primaryMonitor.size[0] * config.initial_position_x - width / 2f,
-				-(primaryMonitor.size[1] * config.initial_position_y + height)
+				primaryMonitor.size[0] * config.initial_position_x - cha.camera.getWidth() / 2f,
+				-(primaryMonitor.size[1] * config.initial_position_y + cha.camera.getHeight())
 		);
 
 		// 4.Window position setup
 		getHWndLoopCtrl = new LoopCtrl(1f / config.display_fps * 4);
 		windowPosition = new TransitionVector2(TernaryFunction.EASE_OUT_CUBIC, (float)durationNormal.toSeconds());
-		windowPosition.reset(plane.getX(), - (height + plane.getY()) + offsetY);
+		windowPosition.reset(plane.getX(), - (cha.camera.getHeight() + plane.getY()) + offsetY);
 		windowPosition.setToEnd();
 		setWindowPos();
 
@@ -143,7 +139,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 		changeAnimation(newAnim); // Apply the new anim.
 
 		// 3.Window properties.
-		windowPosition.reset(plane.getX(), - (height + plane.getY()) + offsetY);
+		windowPosition.reset(plane.getX(), - (cha.camera.getHeight() + plane.getY()) + offsetY);
 		windowPosition.addProgress(Gdx.graphics.getDeltaTime());
 		setWindowPos();
 		if (!windowAlpha.isEnded()) {
@@ -181,9 +177,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 		if (canChangeStage()) {
 			behavior.nextStage();
 			cha.adjustCanvas(behavior.getCurrentStage());
-			width = (int)(config.display_scale * cha.camera.getWidth());
-			height = (int)(config.display_scale * cha.camera.getHeight());
-			plane.setObjSize(width, height);
+			plane.setObjSize(cha.camera.getWidth(), cha.camera.getHeight());
 			Logger.info("Animation", "Changed to " + behavior.getCurrentStage());
 			changeAnimation(behavior.defaultAnim());
 		}
@@ -222,7 +216,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 					tray.hideDialog();
 				} else if (button == Input.Buttons.RIGHT) {
 					// Right Click: Toggle the menu
-					tray.toggleDialog((int)(plane.getX() + screenX), (int)(-plane.getY() - height));
+					tray.toggleDialog((int)(plane.getX() + screenX), (int)(-plane.getY() - cha.camera.getHeight()));
 				}
 			}
 		}
@@ -239,7 +233,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 				// Update window position
 				int x = (int)(windowPosition.now().x + screenX - mouseStatus.x);
 				int y = (int)(windowPosition.now().y + screenY - mouseStatus.y);
-				plane.changePosition(Gdx.graphics.getDeltaTime(), x, -(height + y));
+				plane.changePosition(Gdx.graphics.getDeltaTime(), x, -(cha.camera.getHeight() + y));
 				windowPosition.setToEnd();
 				tray.hideDialog();
 				return true;
@@ -320,7 +314,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 	}
 
 	private boolean isMouseAtSolidPixel() {
-		int pixel = cha.getPixel(mouseStatus.x, height - mouseStatus.y - 1);
+		int pixel = cha.getPixel(mouseStatus.x, cha.camera.getHeight() - mouseStatus.y - 1);
 		return (pixel & 0x000000FF) > 0;
 	}
 
@@ -334,7 +328,9 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 			hWndMine.setWindowTransparent(isAlwaysTransparent);
 			isFocused = hWndMine.isForeground();
 		}
-		hWndMine.setWindowPosition((HWndCtrl)hWndTopmost, (int)windowPosition.now().x, (int)windowPosition.now().y, width, height);
+		hWndMine.setWindowPosition((HWndCtrl)hWndTopmost,
+				(int)windowPosition.now().x, (int)windowPosition.now().y,
+				cha.camera.getWidth(), cha.camera.getHeight());
 	}
 
 	private RelativeWindowPosition getRelativeWindowPositionAt(int x, int y) {
@@ -358,7 +354,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 		hWndList = HWndCtrlFactory.getWindowList(true);
 		HWndCtrl<?> minWindow = null;
 		HashMap<Integer, HWndCtrl<?>> line = new HashMap<>();
-		int myPos = (int)(windowPosition.now().x + width / 2);
+		int myPos = (int)(windowPosition.now().x + cha.camera.getWidth() / 2f);
 		int minNum = 2048;
 		int myNum = coreTitleManager.getNumber(APP_TITLE);
 		final float quantityProduct = 1;
@@ -467,7 +463,8 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 
 	private boolean willReachBorder(float len) {
 		if (plane == null) return false;
-		return (plane.getX() >= plane.borderRight() - width && len > 0) || (plane.getX() <= plane.borderLeft() && len < 0);
+		return (plane.getX() >= plane.borderRight() - cha.camera.getWidth() && len > 0) ||
+				(plane.getX() <= plane.borderLeft() && len < 0);
 	}
 
 

@@ -87,12 +87,12 @@ public class ArkChar {
             // Load skel (use SkeletonJson instead of SkeletonBinary if the file type is JSON)
             try {
                 SkeletonBinary binary = new SkeletonBinary(atlas);
-                binary.setScale(scale);
+                binary.setScale(scale * skelBaseScale);
                 skeletonData = binary.readSkeletonData(Gdx.files.internal(path2skel));
             } catch (Exception e) {
                 Logger.warn("Character", "Failed to load skeleton, trying load as json");
                 SkeletonJson json = new SkeletonJson(atlas);
-                json.setScale(scale);
+                json.setScale(scale * skelBaseScale);
                 skeletonData = json.readSkeletonData(Gdx.files.internal(path2skel));
             }
         } catch (SerializationException | GdxRuntimeException e) {
@@ -116,7 +116,7 @@ public class ArkChar {
             protected void onApply(AnimData playing) {
                 Logger.debug("Animation", "Apply " + playing);
                 // Sync skeleton position data
-                offsetY.reset((float)playing.offsetY());
+                offsetY.reset(playing.offsetY() * scale);
                 position.reset(position.end().x, position.end().y, playing.mobility() != 0 ? playing.mobility() : position.end().z);
             }
         };
