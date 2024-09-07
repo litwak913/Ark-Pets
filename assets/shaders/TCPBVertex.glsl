@@ -4,6 +4,8 @@
 
 // Common Vertex Shader for TwoColorPolygonBatch.
 
+#version 130
+
 attribute vec4 a_position;
 attribute vec4 a_light;
 attribute vec4 a_dark;

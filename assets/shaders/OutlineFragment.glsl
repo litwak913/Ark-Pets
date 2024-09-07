@@ -4,9 +4,10 @@
 
 // Border Extension and Ouline Effect Fragment Shader for TwoColorPolygonBatch.
 
+#version 130
+
 varying vec2 v_texCoords;       // From VS
 uniform sampler2D u_texture;    // From TCPB
-uniform float u_pma;            // From TCPB
 uniform vec3 u_outlineColor;    // Required
 uniform float u_outlineWidth;   // Required
 
@@ -14,7 +15,6 @@ const float c_opacity_threshold = 0.1;
 
 void main() {
     vec4 texColor = texture2D(u_texture, v_texCoords);
-    u_pma; // Not used
 
     if (u_outlineWidth != 0.0) {
         ivec2 texSize = textureSize(u_texture, 0);

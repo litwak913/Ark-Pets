@@ -66,6 +66,8 @@ public class ArkChar {
         /* Pre-multiplied alpha shouldn't be applied to models released in Arknights 2.1.41 or later,
         otherwise you may get a corrupted rendering result. */
         renderer.setPremultipliedAlpha(false);
+        /* Shader pedantic should be disabled to avoid uniform not-found error. */
+        ShaderProgram.pedantic = false;
         shader1 = getShader(pass1VShader, pass1FShader);
         shader2 = getShader(pass2VShader, pass2FShader);
         Logger.debug("Shader", "Shader program compiled");
