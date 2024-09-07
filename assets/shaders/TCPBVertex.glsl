@@ -15,11 +15,11 @@ varying vec4 v_light;       // Transfer to FS
 varying vec4 v_dark;        // Transfer to FS
 varying vec2 v_texCoords;   // Transfer to FS
 
-const float c_light_a_coef = 255.0 / 254.0;
+const float c_lightAlphaCoef = 255.0 / 254.0;
 
 void main() {
     v_light = a_light;
-    v_light.a = v_light.a * c_light_a_coef;
+    v_light.a = v_light.a * c_lightAlphaCoef;
     v_dark = a_dark;
     v_texCoords = a_texCoord0;
     gl_Position = u_projTrans * a_position;
