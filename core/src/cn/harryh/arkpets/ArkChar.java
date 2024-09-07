@@ -200,7 +200,7 @@ public class ArkChar {
      * The animation will be updated according to {@code Gdx.graphics.getDeltaTime()}.
      */
     protected void renderToBatch() {
-        // Update skeleton position
+        // Update skeleton position and geometry
         position.reset(camera.getWidth() >> 1, position.end().y, position.end().z);
         position.addProgress(Gdx.graphics.getDeltaTime());
         offsetY.addProgress(Gdx.graphics.getDeltaTime());
@@ -208,17 +208,16 @@ public class ArkChar {
         skeleton.setPosition(position.now().x, position.now().y + offsetY.now());
         skeleton.setScaleX(position.now().z);
         skeleton.updateWorldTransform();
+        batch.getProjectionMatrix().set(camera.combined);
         // Apply current animation
         animationState.apply(skeleton);
         animationState.update(Gdx.graphics.getDeltaTime());
-        // Reset the canvas
-        ScreenUtils.clear(0, 0, 0, 0, true);
-        batch.getProjectionMatrix().set(camera.combined);
         // Render Pass 1: Render the skeleton
-        FrameBuffer fbo = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+        FrameBuffer fbo = new FrameBuffer(Format.RGBA8888, camera.getWidth(), camera.getHeight(), false);
         fbo.begin();
         shader1.bind();
         batch.setShader(shader1);
+        ScreenUtils.clear(0, 0, 0, 0, true);
         batch.begin();
         batch.draw(bgTexture, 0, 0);
         renderer.draw(batch, skeleton);
@@ -231,6 +230,7 @@ public class ArkChar {
         shader2.setUniformf("u_outlineColor", 1f, 1f, 0f);
         shader2.setUniformf("u_outlineWidth", outlineWidth.now());
         batch.setShader(shader2);
+        ScreenUtils.clear(0, 0, 0, 0, true);
         batch.begin();
         batch.draw(passedTexture,
                 0, 0, 0, 0, camera.getWidth(), camera.getHeight(),
@@ -239,6 +239,7 @@ public class ArkChar {
                 false, true);
         batch.end();
         batch.setShader(null);
+        fbo.dispose();
     }
 
     private ShaderProgram getShader(String path2vertex, String path2fragment) {
