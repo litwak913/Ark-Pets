@@ -20,9 +20,10 @@
            fx:controller="cn.harryh.arkpets.controllers.RootModule">
 
     <!-- ********** 1. Main Content ********** -->
-    <StackPane fx:id="body">
-        <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="376.0" prefWidth="600.0"
-                    StackPane.alignment="BOTTOM_CENTER">
+    <StackPane fx:id="body" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="376.0"
+               prefWidth="600.0" StackPane.alignment="BOTTOM_CENTER">
+        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                    prefHeight="376.0" prefWidth="600.0" StackPane.alignment="BOTTOM_CENTER">
             <!-- ***** 1.1. Sidebar ***** -->
             <Pane id="Sidebar" fx:id="sidebar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                   minWidth="-Infinity" prefHeight="376.0" prefWidth="140.0" styleClass="shadowed"
