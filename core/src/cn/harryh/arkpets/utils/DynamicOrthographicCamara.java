@@ -5,6 +5,7 @@ package cn.harryh.arkpets.utils;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 import java.util.Objects;
 
@@ -16,6 +17,7 @@ public class DynamicOrthographicCamara extends OrthographicCamera {
     protected final Insert curInsert = new Insert();
     protected final Insert maxInsert = new Insert();
     protected final Insert minInsert = new Insert();
+    protected FrameBuffer fbo;
 
     protected static final int alphaThreshold = 255;
     protected static final int stepLength = 2;
@@ -138,6 +140,23 @@ public class DynamicOrthographicCamara extends OrthographicCamera {
         return curInsert.top + curInsert.bottom + initHeight;
     }
 
+    /** Gets the FrameBuffer Object that has the same width and height with this camera.
+     * Note that the returned FrameBuffer Object may be a cached one.
+     * @return The FrameBuffer Object.
+     */
+    public FrameBuffer getFBO() {
+        if (fbo == null) {
+            fbo = new FrameBuffer(Pixmap.Format.RGBA8888, getWidth(), getHeight(), false);
+        } else if (fbo.getWidth() != getWidth() || fbo.getHeight() != getHeight()) {
+            fbo.dispose();
+            fbo = new FrameBuffer(Pixmap.Format.RGBA8888, getWidth(), getHeight(), false);
+        }
+        return fbo;
+    }
+
+    /** Gets the current insert.
+     * @return The insert object;
+     */
     public Insert getInsert() {
         return curInsert;
     }

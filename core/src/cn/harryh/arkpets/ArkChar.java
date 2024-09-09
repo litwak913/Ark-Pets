@@ -19,7 +19,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -213,8 +212,7 @@ public class ArkChar {
         animationState.apply(skeleton);
         animationState.update(Gdx.graphics.getDeltaTime());
         // Render Pass 1: Render the skeleton
-        FrameBuffer fbo = new FrameBuffer(Format.RGBA8888, camera.getWidth(), camera.getHeight(), false);
-        fbo.begin();
+        camera.getFBO().begin();
         shader1.bind();
         batch.setShader(shader1);
         ScreenUtils.clear(0, 0, 0, 0, true);
@@ -223,9 +221,9 @@ public class ArkChar {
         renderer.draw(batch, skeleton);
         batch.end();
         batch.setShader(null);
-        fbo.end();
+        camera.getFBO().end();
         // Render Pass 2: Render the outline
-        Texture passedTexture = fbo.getColorBufferTexture();
+        Texture passedTexture = camera.getFBO().getColorBufferTexture();
         shader2.bind();
         shader2.setUniformf("u_outlineColor", 1f, 1f, 0f);
         shader2.setUniformf("u_outlineWidth", outlineWidth.now());
@@ -239,7 +237,6 @@ public class ArkChar {
                 false, true);
         batch.end();
         batch.setShader(null);
-        fbo.dispose();
     }
 
     private ShaderProgram getShader(String path2vertex, String path2fragment) {
@@ -257,8 +254,7 @@ public class ArkChar {
         float timePerSample = fittingSamples / (float)fpsDefault;
         // Prepare a Frame Buffer Object
         camera.setInsertMaxed();
-        FrameBuffer fbo = new FrameBuffer(Format.RGBA8888, camera.getWidth(), camera.getHeight(), false);
-        fbo.begin();
+        camera.getFBO().begin();
         ScreenUtils.clear(0, 0, 0, 0, true);
         // Render all animations to the FBO
         for (AnimClip animClip : animClips) {
@@ -282,8 +278,7 @@ public class ArkChar {
         // Take down the snapshot from the rendered FBO
         Pixmap snapshot = Pixmap.createFromFrameBuffer(0, 0, camera.getWidth(), camera.getHeight());
         // PixmapIO.writePNG(new FileHandle("temp/temp.png"), snapshot);
-        fbo.end();
-        fbo.dispose();
+        camera.getFBO().end();
         // Crop the canvas in order to fit the snapshot
         camera.cropTo(snapshot, false, true);
         snapshot.dispose();
