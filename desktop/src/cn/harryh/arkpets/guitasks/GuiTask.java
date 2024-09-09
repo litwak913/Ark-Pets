@@ -127,8 +127,8 @@ abstract public class GuiTask {
 
         // Add components to the dialog
         VBox content = new VBox();
-        Label h2 = (Label) GuiPrefabs.DialogUtil.getPrefabsH2(getHeader());
-        Label h3 = (Label) GuiPrefabs.DialogUtil.getPrefabsH3(getInitialContent());
+        Label h2 = GuiPrefabs.DialogUtil.getPrefabsH2(getHeader());
+        Label h3 = GuiPrefabs.DialogUtil.getPrefabsH3(getInitialContent());
         content.setSpacing(5);
         content.getChildren().add(h2);
         content.getChildren().add(new Separator());
