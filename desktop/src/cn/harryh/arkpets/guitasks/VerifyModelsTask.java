@@ -22,8 +22,8 @@ public class VerifyModelsTask extends GuiTask {
     private final String[] dialogHeader = new String[1];
     private final String[] dialogContent = new String[1];
 
-    public VerifyModelsTask(StackPane root, GuiTaskStyle style, ModelsDataset modelsDataset) {
-        super(root, style);
+    public VerifyModelsTask(StackPane parent, GuiTaskStyle style, ModelsDataset modelsDataset) {
+        super(parent, style);
         this.modelsDataset = modelsDataset;
     }
 
@@ -86,13 +86,13 @@ public class VerifyModelsTask extends GuiTask {
     @Override
     protected void onFailed(Throwable e) {
         if (style != GuiTaskStyle.HIDDEN)
-            GuiPrefabs.DialogUtil.createErrorDialog(root, e).show();
+            GuiPrefabs.Dialogs.createErrorDialog(parent, e).show();
     }
 
     @Override
     protected void onSucceeded(boolean result) {
         if (style != GuiTaskStyle.HIDDEN)
-            GuiPrefabs.DialogUtil.createCommonDialog(root,
+            GuiPrefabs.Dialogs.createCommonDialog(parent,
                     dialogGraphic[0],
                     "验证资源完整性",
                     dialogHeader[0],

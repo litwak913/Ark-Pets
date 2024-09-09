@@ -14,8 +14,8 @@ abstract public class UnzipTask extends GuiTask {
     protected final String zipPath;
     protected final String destPath;
 
-    public UnzipTask(StackPane root, GuiTaskStyle style, String zipPath, String destPath) {
-        super(root, style);
+    public UnzipTask(StackPane parent, GuiTaskStyle style, String zipPath, String destPath) {
+        super(parent, style);
         this.zipPath = zipPath;
         this.destPath = destPath;
     }
@@ -36,6 +36,6 @@ abstract public class UnzipTask extends GuiTask {
     @Override
     protected void onFailed(Throwable e) {
         if (style != GuiTaskStyle.HIDDEN)
-            GuiPrefabs.DialogUtil.createErrorDialog(root, e).show();
+            GuiPrefabs.Dialogs.createErrorDialog(parent, e).show();
     }
 }

@@ -19,7 +19,7 @@ import java.util.List;
 
 
 abstract public class GuiTask {
-    public final StackPane root;
+    public final StackPane parent;
     public final GuiTaskStyle style;
     protected final Task<Boolean> task;
     protected final JFXDialog dialog;
@@ -35,33 +35,33 @@ abstract public class GuiTask {
     }
 
     /** Initializes a task wrapper that can execute a certain task in the JavaFX GUI.
-     * @param root The root node of the UI.
+     * @param parent The parent node of the UI.
      * @param style The {@link GuiTaskStyle} of this instance.
      * @since ArkPets 2.4
      */
-    public GuiTask(StackPane root, GuiTaskStyle style) {
-        this.root = root;
+    public GuiTask(StackPane parent, GuiTaskStyle style) {
+        this.parent = parent;
         this.style = style;
 
         // Generate related instances
         task = getTask();
-        dialog = style != GuiTaskStyle.HIDDEN ? getDialog(root, task, style != GuiTaskStyle.STRICT) : null;
+        dialog = style != GuiTaskStyle.HIDDEN ? getDialog(parent, task, style != GuiTaskStyle.STRICT) : null;
 
         // Handle all task events
         task.setOnCancelled(e -> {
             Logger.info("Task", this + " was cancelled.");
             this.onCancelled();
-            GuiPrefabs.DialogUtil.disposeDialog(dialog, root);
+            GuiPrefabs.Dialogs.disposeDialog(dialog);
         });
         task.setOnFailed(e -> {
             Logger.error("Task", this + " failed, details see below.", task.getException());
             this.onFailed(task.getException());
-            GuiPrefabs.DialogUtil.disposeDialog(dialog, root);
+            GuiPrefabs.Dialogs.disposeDialog(dialog);
         });
         task.setOnSucceeded(e -> {
             Logger.info("Task", this + " completed.");
             this.onSucceeded(task.getValue());
-            GuiPrefabs.DialogUtil.disposeDialog(dialog, root);
+            GuiPrefabs.Dialogs.disposeDialog(dialog);
         });
         task.setOnRunning(e -> Logger.debug("Task", this + " running."));
         task.setOnScheduled(e -> Logger.debug("Task", this + " scheduled."));
@@ -119,16 +119,16 @@ abstract public class GuiTask {
     protected void onSucceeded(boolean result) {
     }
 
-    private JFXDialog getDialog(StackPane root, Task<Boolean> boundTask, boolean cancelable) {
+    private JFXDialog getDialog(StackPane parent, Task<Boolean> boundTask, boolean cancelable) {
         // Initialize the dialog framework
-        JFXDialog dialog = GuiPrefabs.DialogUtil.createCenteredDialog(root, false);
+        JFXDialog dialog = GuiPrefabs.Dialogs.createCenteredDialog(parent, false);
         ProgressBar bar = new ProgressBar(-1);
-        bar.setPrefSize(root.getWidth() * 0.6, 10);
+        bar.setPrefSize(parent.getWidth() * 0.6, 10);
 
         // Add components to the dialog
         VBox content = new VBox();
-        Label h2 = GuiPrefabs.DialogUtil.getPrefabsH2(getHeader());
-        Label h3 = GuiPrefabs.DialogUtil.getPrefabsH3(getInitialContent());
+        Label h2 = GuiPrefabs.Dialogs.getPrefabsH2(getHeader());
+        Label h3 = GuiPrefabs.Dialogs.getPrefabsH3(getInitialContent());
         content.setSpacing(5);
         content.getChildren().add(h2);
         content.getChildren().add(new Separator());
@@ -138,10 +138,10 @@ abstract public class GuiTask {
         JFXDialogLayout layout = new JFXDialogLayout();
         layout.setHeading(bar);
         layout.setBody(content);
-        layout.setActions(GuiPrefabs.DialogUtil.getOkayButton(dialog, root));
+        layout.setActions(GuiPrefabs.Dialogs.getOkayButton(dialog));
         dialog.setContent(layout);
         if (cancelable) {
-            JFXButton cancel = GuiPrefabs.DialogUtil.getCancelButton(dialog, root);
+            JFXButton cancel = GuiPrefabs.Dialogs.getCancelButton(dialog);
             cancel.setOnAction(e -> boundTask.cancel());
             layout.setActions(cancel);
         } else {

@@ -20,8 +20,8 @@ import static cn.harryh.arkpets.Const.appVersion;
 
 
 public class CheckAppUpdateTask extends FetchRemoteTask {
-    public CheckAppUpdateTask(StackPane root, GuiTaskStyle style, String sourceStr) {
-        super(root,
+    public CheckAppUpdateTask(StackPane parent, GuiTaskStyle style, String sourceStr) {
+        super(parent,
                 style,
                 PathConfig.urlApi + "?type=queryVersion&cliVer=" + appVersion + "&source=" + sourceStr,
                 PathConfig.tempQueryVersionCachePath,
@@ -55,7 +55,7 @@ public class CheckAppUpdateTask extends FetchRemoteTask {
                     // On update is available:
                     Const.isUpdateAvailable = true;
                     if (style != GuiTaskStyle.HIDDEN)
-                        GuiPrefabs.DialogUtil.createCommonDialog(root,
+                        GuiPrefabs.Dialogs.createCommonDialog(parent,
                                 GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_INFO_ALT, GuiPrefabs.Colors.COLOR_INFO),
                                 "检查软件更新",
                                 "检测到软件有新的版本！",
@@ -65,7 +65,7 @@ public class CheckAppUpdateTask extends FetchRemoteTask {
                     // On up-to-dated:
                     Const.isUpdateAvailable = false;
                     if (style != GuiTaskStyle.HIDDEN)
-                        GuiPrefabs.DialogUtil.createCommonDialog(root,
+                        GuiPrefabs.Dialogs.createCommonDialog(parent,
                                 GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_SUCCESS_ALT, GuiPrefabs.Colors.COLOR_SUCCESS),
                                 "检查软件更新",
                                 "尚未发现新的正式版本。",
@@ -77,7 +77,7 @@ public class CheckAppUpdateTask extends FetchRemoteTask {
                 // On API failed:
                 Logger.warn("Checker", "Application version check failed (api failed)");
                 if (style != GuiTaskStyle.HIDDEN)
-                    GuiPrefabs.DialogUtil.createCommonDialog(root,
+                    GuiPrefabs.Dialogs.createCommonDialog(parent,
                             GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_DANGER_ALT, GuiPrefabs.Colors.COLOR_DANGER),
                             "检查软件更新",
                             "服务器返回了无效的消息。",
@@ -88,7 +88,7 @@ public class CheckAppUpdateTask extends FetchRemoteTask {
             // On parsing failed:
             Logger.error("Checker", "Application version check failed unexpectedly, details see below.", e);
             if (style != GuiTaskStyle.HIDDEN)
-                GuiPrefabs.DialogUtil.createErrorDialog(root, e).show();
+                GuiPrefabs.Dialogs.createErrorDialog(parent, e).show();
         }
     }
 }

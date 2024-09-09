@@ -219,7 +219,7 @@ public final class RootModule implements Controller<ArkHomeFX> {
     public void windowClose(MouseEvent event) {
         String solidExitTip = (app.config != null && app.config.launcher_solid_exit) ?
             "退出程序将会同时退出已启动的桌宠。" : "退出程序后已启动的桌宠将会保留。";
-        GuiPrefabs.DialogUtil.createConfirmDialog(body,
+        GuiPrefabs.Dialogs.createConfirmDialog(body,
                 GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_HELP_ALT, GuiPrefabs.Colors.COLOR_INFO),
                 "确认退出",
                 "现在退出 " + appName + " 吗？",
@@ -284,7 +284,7 @@ public final class RootModule implements Controller<ArkHomeFX> {
                         return false;
                     }
                 };
-                task.setOnFailed(e -> GuiPrefabs.DialogUtil.createErrorDialog(app.body, task.getException()).show());
+                task.setOnFailed(e -> GuiPrefabs.Dialogs.createErrorDialog(app.body, task.getException()).show());
                 return task;
             }
         };

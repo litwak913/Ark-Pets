@@ -439,7 +439,7 @@ public class GuiComponents {
         }
 
         public void show(StackPane root) {
-            GuiPrefabs.DialogUtil.createCommonDialog(root,
+            GuiPrefabs.Dialogs.createCommonDialog(root,
                     getIcon(),
                     getTitle(),
                     getHeader(),

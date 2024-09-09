@@ -14,9 +14,9 @@ import static cn.harryh.arkpets.Const.PathConfig;
 
 
 public class DownloadModelsTask extends FetchGitHubRemoteTask {
-    public DownloadModelsTask(StackPane root, GuiTaskStyle style) {
+    public DownloadModelsTask(StackPane parent, GuiTaskStyle style) {
         super(
-                root,
+                parent,
                 style,
                 PathConfig.urlModelsZip,
                 PathConfig.tempModelsZipCachePath,

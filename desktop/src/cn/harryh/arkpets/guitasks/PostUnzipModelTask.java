@@ -21,8 +21,8 @@ public class PostUnzipModelTask extends GuiTask {
     private final String rootPath;
     private final String modelsDataPath;
 
-    public PostUnzipModelTask(StackPane root, GuiTaskStyle style) {
-        super(root, style);
+    public PostUnzipModelTask(StackPane parent, GuiTaskStyle style) {
+        super(parent, style);
         this.rootPath = PathConfig.tempModelsUnzipDirPath;
         this.modelsDataPath = PathConfig.fileModelsDataPath;
     }
@@ -86,6 +86,6 @@ public class PostUnzipModelTask extends GuiTask {
     @Override
     protected void onFailed(Throwable e) {
         if (style != GuiTaskStyle.HIDDEN)
-            GuiPrefabs.DialogUtil.createErrorDialog(root, e).show();
+            GuiPrefabs.Dialogs.createErrorDialog(parent, e).show();
     }
 }

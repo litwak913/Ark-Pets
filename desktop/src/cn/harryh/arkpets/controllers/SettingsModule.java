@@ -211,7 +211,7 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
         configAutoStartup.setOnAction(e -> {
             if (configAutoStartup.isSelected()) {
                 if (ArkConfig.StartupConfig.addStartup()) {
-                    GuiPrefabs.DialogUtil.createCommonDialog(app.body,
+                    GuiPrefabs.Dialogs.createCommonDialog(app.body,
                             GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_SUCCESS_ALT, GuiPrefabs.Colors.COLOR_SUCCESS),
                             "开机自启动",
                             "开机自启动设置成功。",
@@ -219,14 +219,14 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
                             null).show();
                 } else {
                     if (ArkConfig.StartupConfig.generateScript() == null)
-                        GuiPrefabs.DialogUtil.createCommonDialog(app.body,
+                        GuiPrefabs.Dialogs.createCommonDialog(app.body,
                                 GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_WARNING_ALT, GuiPrefabs.Colors.COLOR_WARNING),
                                 "开机自启动",
                                 "开机自启动设置失败。",
                                 "无法确认目标程序的位置，其原因和相关解决方案如下：",
                                 "为确保自启动服务的稳定性，直接打开的ArkPets的\".jar\"版启动器，是不支持配置自启动的。请使用exe版的安装包安装ArkPets后运行，或使用zip版的压缩包解压程序文件后运行。另外，当您使用错误的工作目录运行启动器时也可能出现此情况。").show();
                     else
-                        GuiPrefabs.DialogUtil.createCommonDialog(app.body,
+                        GuiPrefabs.Dialogs.createCommonDialog(app.body,
                                 GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_WARNING_ALT, GuiPrefabs.Colors.COLOR_WARNING),
                                 "开机自启动",
                                 "开机自启动设置失败。",

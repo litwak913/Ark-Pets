@@ -9,8 +9,8 @@ import static cn.harryh.arkpets.Const.PathConfig;
 
 
 public class UnzipModelsTask extends UnzipTask {
-    public UnzipModelsTask(StackPane root, GuiTaskStyle style, String zipPath) {
-        super(root, style, zipPath, PathConfig.tempModelsUnzipDirPath);
+    public UnzipModelsTask(StackPane parent, GuiTaskStyle style, String zipPath) {
+        super(parent, style, zipPath, PathConfig.tempModelsUnzipDirPath);
     }
 
     @Override

@@ -19,9 +19,9 @@ import static cn.harryh.arkpets.Const.charsetDefault;
 
 
 public class CheckModelUpdateTask extends FetchGitHubRemoteTask {
-    public CheckModelUpdateTask(StackPane root, GuiTaskStyle style) {
+    public CheckModelUpdateTask(StackPane parent, GuiTaskStyle style) {
         super(
-                root,
+                parent,
                 style,
                 PathConfig.urlModelsData,
                 PathConfig.tempDirPath + PathConfig.fileModelsDataPath,
@@ -54,7 +54,7 @@ public class CheckModelUpdateTask extends FetchGitHubRemoteTask {
                 // When failed to parse the remote repo models info
                 versionDescription = "unknown";
                 Logger.error("Checker", "Unable to parse remote model repo version, details see below.", e);
-                GuiPrefabs.DialogUtil.createCommonDialog(root,
+                GuiPrefabs.Dialogs.createCommonDialog(parent,
                         GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_WARNING_ALT, GuiPrefabs.Colors.COLOR_WARNING),
                         "检查模型更新",
                         "无法判断模型仓库版本。",
@@ -67,7 +67,7 @@ public class CheckModelUpdateTask extends FetchGitHubRemoteTask {
 
             if (IOUtils.FileUtil.getMD5(new File(PathConfig.fileModelsDataPath)).equals(IOUtils.FileUtil.getMD5(new File(PathConfig.tempDirPath + PathConfig.fileModelsDataPath)))) {
                 Logger.info("Checker", "Model repo version check finished (up-to-dated)");
-                GuiPrefabs.DialogUtil.createCommonDialog(root,
+                GuiPrefabs.Dialogs.createCommonDialog(parent,
                         GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_SUCCESS_ALT, GuiPrefabs.Colors.COLOR_SUCCESS),
                         "检查模型更新",
                         "无需进行模型库更新。",
@@ -84,14 +84,14 @@ public class CheckModelUpdateTask extends FetchGitHubRemoteTask {
                     // When failed to parse the remote local models info
                     oldVersionDescription = "unknown";
                     Logger.error("Checker", "Unable to parse local model repo version, details see below.", e);
-                    GuiPrefabs.DialogUtil.createCommonDialog(root,
+                    GuiPrefabs.Dialogs.createCommonDialog(parent,
                             GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_WARNING_ALT, GuiPrefabs.Colors.COLOR_WARNING),
                             "检查模型更新",
                             "无法判断模型库版本。",
                             "因发生错误，无法解析本地模型库的版本。",
                             null).show();
                 }
-                GuiPrefabs.DialogUtil.createCommonDialog(root,
+                GuiPrefabs.Dialogs.createCommonDialog(parent,
                         GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_INFO_ALT, GuiPrefabs.Colors.COLOR_INFO),
                         "检查模型更新",
                         "模型库似乎有更新！",
@@ -102,7 +102,7 @@ public class CheckModelUpdateTask extends FetchGitHubRemoteTask {
         } catch (IOException e) {
             Logger.error("Checker", "Model repo version check failed unexpectedly, details see below.", e);
             if (style != GuiTaskStyle.HIDDEN)
-                GuiPrefabs.DialogUtil.createErrorDialog(root, e).show();
+                GuiPrefabs.Dialogs.createErrorDialog(parent, e).show();
         }
     }
 }

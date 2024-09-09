@@ -23,8 +23,8 @@ abstract public class FetchRemoteTask extends GuiTask {
     protected final String destPath;
     protected final boolean isHttpsTrustAll;
 
-    public FetchRemoteTask(StackPane root, GuiTaskStyle style, String remotePath, String destPath, boolean isHttpTrustAll) {
-        super(root, style);
+    public FetchRemoteTask(StackPane parent, GuiTaskStyle style, String remotePath, String destPath, boolean isHttpTrustAll) {
+        super(parent, style);
         this.remotePath = remotePath;
         this.destPath = destPath;
         this.isHttpsTrustAll = isHttpTrustAll;
@@ -78,6 +78,6 @@ abstract public class FetchRemoteTask extends GuiTask {
     @Override
     protected void onFailed(Throwable e) {
         if (style != GuiTaskStyle.HIDDEN)
-            GuiPrefabs.DialogUtil.createErrorDialog(root, e).show();
+            GuiPrefabs.Dialogs.createErrorDialog(parent, e).show();
     }
 }

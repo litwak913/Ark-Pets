@@ -26,8 +26,8 @@ abstract public class FetchGitHubRemoteTask extends GuiTask {
     protected final boolean isHttpsTrustAll;
     protected GitHubSource selectedSource;
 
-    public FetchGitHubRemoteTask(StackPane root, GuiTaskStyle style, String remotePathSuffix, String destPath, boolean isHttpsTrustAll, boolean isArchive) {
-        super(root, style);
+    public FetchGitHubRemoteTask(StackPane parent, GuiTaskStyle style, String remotePathSuffix, String destPath, boolean isHttpsTrustAll, boolean isArchive) {
+        super(parent, style);
         this.remotePathSuffix = remotePathSuffix;
         this.destPath = destPath;
         this.isArchive = isArchive;
@@ -92,7 +92,7 @@ abstract public class FetchGitHubRemoteTask extends GuiTask {
     @Override
     protected void onFailed(Throwable e) {
         if (style != GuiTaskStyle.HIDDEN)
-            GuiPrefabs.DialogUtil.createErrorDialog(root, e).show();
+            GuiPrefabs.Dialogs.createErrorDialog(parent, e).show();
         if (selectedSource != null)
             selectedSource.receiveError();
     }

@@ -143,37 +143,37 @@ public class GuiPrefabs {
     }
 
 
-    public static class DialogUtil {
-        public static void disposeDialog(JFXDialog dialog, StackPane root) {
-            if (dialog == null || root == null)
+    public static class Dialogs {
+        public static void disposeDialog(JFXDialog dialog) {
+            if (dialog == null)
                 return;
-            if (dialog.isVisible())
-                dialog.setOnDialogClosed(e -> root.requestFocus());
+            if (dialog.isVisible() && dialog.getParent() != null)
+                dialog.setOnDialogClosed(e -> dialog.getParent().requestFocus());
             dialog.close();
         }
 
-        public static JFXDialog createCenteredDialog(StackPane root, boolean overlayClose) {
+        public static JFXDialog createCenteredDialog(StackPane parent, boolean overlayClose) {
             JFXDialog dialog = new JFXDialog();
-            dialog.setDialogContainer(root);
+            dialog.setDialogContainer(parent);
             dialog.setOverlayClose(overlayClose);
             dialog.setTransitionType(JFXDialog.DialogTransition.CENTER);
             return dialog;
         }
 
-        public static JFXDialog createCommonDialog(StackPane root, Node graphic, String title, String header, String content, String detail) {
-            JFXDialog dialog = DialogUtil.createCenteredDialog(root, false);
+        public static JFXDialog createCommonDialog(StackPane parent, Node graphic, String title, String header, String content, String detail) {
+            JFXDialog dialog = Dialogs.createCenteredDialog(parent, false);
             VBox body = new VBox();
-            Label h2 = DialogUtil.getPrefabsH2(header);
-            Label h3 = DialogUtil.getPrefabsH3(content);
+            Label h2 = Dialogs.getPrefabsH2(header);
+            Label h3 = Dialogs.getPrefabsH3(content);
             body.setSpacing(5);
             body.getChildren().add(h2);
             body.getChildren().add(new Separator());
             body.getChildren().add(h3);
 
             JFXDialogLayout layout = new JFXDialogLayout();
-            layout.setHeading(DialogUtil.getHeading(graphic, title, Colors.COLOR_LIGHT_GRAY));
+            layout.setHeading(Dialogs.getHeading(graphic, title, Colors.COLOR_LIGHT_GRAY));
             layout.setBody(body);
-            layout.setActions(DialogUtil.getOkayButton(dialog, root));
+            layout.setActions(Dialogs.getOkayButton(dialog));
             dialog.setContent(layout);
 
             if (detail != null && !detail.isEmpty()) {
@@ -187,21 +187,21 @@ public class GuiPrefabs {
             return dialog;
         }
 
-        public static JFXDialog createConfirmDialog(StackPane root, Node graphic, String title, String header, String content, Runnable onConfirmed) {
-            JFXDialog dialog = DialogUtil.createCenteredDialog(root, true);
+        public static JFXDialog createConfirmDialog(StackPane parent, Node graphic, String title, String header, String content, Runnable onConfirmed) {
+            JFXDialog dialog = Dialogs.createCenteredDialog(parent, true);
             VBox body = new VBox();
-            Label h2 = DialogUtil.getPrefabsH2(header);
-            Label h3 = DialogUtil.getPrefabsH3(content);
+            Label h2 = Dialogs.getPrefabsH2(header);
+            Label h3 = Dialogs.getPrefabsH3(content);
             body.setSpacing(5);
             body.getChildren().add(h2);
             body.getChildren().add(new Separator());
             body.getChildren().add(h3);
 
             JFXDialogLayout layout = new JFXDialogLayout();
-            layout.setHeading(DialogUtil.getHeading(graphic, title, Colors.COLOR_LIGHT_GRAY));
+            layout.setHeading(Dialogs.getHeading(graphic, title, Colors.COLOR_LIGHT_GRAY));
             layout.setBody(body);
-            JFXButton confirmButton = getOkayButton(dialog, root);
-            JFXButton cancelButton = getCancelButton(dialog, root);
+            JFXButton confirmButton = getOkayButton(dialog);
+            JFXButton cancelButton = getCancelButton(dialog);
             confirmButton.setOnAction(e -> {
                 dialog.setOnDialogClosed(ev -> onConfirmed.run());
                 dialog.close();
@@ -211,12 +211,12 @@ public class GuiPrefabs {
             return dialog;
         }
 
-        public static JFXDialog createErrorDialog(StackPane root, Throwable e) {
-            JFXDialog dialog = DialogUtil.createCenteredDialog(root, false);
+        public static JFXDialog createErrorDialog(StackPane parent, Throwable e) {
+            JFXDialog dialog = Dialogs.createCenteredDialog(parent, false);
 
             VBox content = new VBox();
-            Label h2 = DialogUtil.getPrefabsH2("啊哦~ ArkPets启动器抛出了一个异常。");
-            Label h3 = DialogUtil.getPrefabsH3("请重试操作，或查看帮助文档与日志。如需联系开发者，请提供下述信息：");
+            Label h2 = Dialogs.getPrefabsH2("啊哦~ ArkPets启动器抛出了一个异常。");
+            Label h3 = Dialogs.getPrefabsH3("请重试操作，或查看帮助文档与日志。如需联系开发者，请提供下述信息：");
             content.setSpacing(5);
             content.getChildren().add(h2);
             content.getChildren().add(new Separator());
@@ -234,7 +234,7 @@ public class GuiPrefabs {
             content.getChildren().add(textArea);
 
             JFXDialogLayout layout = new JFXDialogLayout();
-            layout.setHeading(DialogUtil.getHeading(Icons.getIcon(Icons.ICON_DANGER, Colors.COLOR_DANGER), "发生异常", Colors.COLOR_DANGER));
+            layout.setHeading(Dialogs.getHeading(Icons.getIcon(Icons.ICON_DANGER, Colors.COLOR_DANGER), "发生异常", Colors.COLOR_DANGER));
             layout.setBody(content);
 
             JFXButton button = new JFXButton();
@@ -254,15 +254,15 @@ public class GuiPrefabs {
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archives", "*.zip"));
                 fileChooser.setInitialFileName(LocalDateTime.now().format(DateTimeFormatter.ofPattern("'ArkPets_Logs_'yyyy-MM-dd-HH-mm-ss'.zip'")));
                 Logger.info("Dialog", "Opening file chooser to export logs");
-                File zipFile = fileChooser.showSaveDialog(root.getScene().getWindow());
+                File zipFile = fileChooser.showSaveDialog(parent.getScene().getWindow());
                 if (zipFile == null)
                     return;
                 // Export log files
-                new ZipTask(root, GuiTask.GuiTaskStyle.STRICT, zipFile.toString(), logList).start();
-                disposeDialog(dialog, root);
+                new ZipTask(parent, GuiTask.GuiTaskStyle.STRICT, zipFile.toString(), logList).start();
+                disposeDialog(dialog);
             });
 
-            layout.setActions(button, DialogUtil.getOkayButton(dialog, root));
+            layout.setActions(button, Dialogs.getOkayButton(dialog));
             dialog.setContent(layout);
 
             if (e instanceof ProcessPool.UnexpectedExitCodeException) {
@@ -304,12 +304,12 @@ public class GuiPrefabs {
             } else if (e instanceof SSLException) {
                 h2.setText("无法建立安全的神经连接");
                 h3.setText("SSL证书错误，请检查代理设置。您也可以尝试[信任]所有证书后重试刚才的操作。");
-                JFXButton apply = DialogUtil.getTrustButton(dialog, root);
+                JFXButton apply = Dialogs.getTrustButton(dialog);
                 apply.setOnAction(ev -> {
                     Const.isHttpsTrustAll = true;
-                    DialogUtil.disposeDialog(dialog, root);
+                    Dialogs.disposeDialog(dialog);
                 });
-                DialogUtil.attachAction(dialog, apply, 0);
+                Dialogs.attachAction(dialog, apply, 0);
             } else if (e instanceof ZipException) {
                 h3.setText("压缩文件相关错误。可能是文件不完整或已损坏，请稍后重试。");
             }
@@ -346,37 +346,37 @@ public class GuiPrefabs {
             return h3;
         }
 
-        public static JFXButton getCancelButton(JFXDialog dialog, StackPane root) {
+        public static JFXButton getCancelButton(JFXDialog dialog) {
             JFXButton button = new JFXButton();
             button.setText("取 消");
             button.setTextFill(Paint.valueOf(Colors.COLOR_WHITE));
             button.setStyle("-fx-font-size:13px;-fx-text-fill:" + Colors.COLOR_WHITE + ";-fx-background-color:" + Colors.COLOR_INFO);
-            button.setOnAction(e -> disposeDialog(dialog, root));
+            button.setOnAction(e -> disposeDialog(dialog));
             return button;
         }
 
-        public static JFXButton getOkayButton(JFXDialog dialog, StackPane root) {
+        public static JFXButton getOkayButton(JFXDialog dialog) {
             JFXButton button = new JFXButton();
             button.setText("确 认");
             button.setTextFill(Paint.valueOf(Colors.COLOR_WHITE));
             button.setStyle("-fx-font-size:13px;-fx-text-fill:" + Colors.COLOR_WHITE + ";-fx-background-color:" + Colors.COLOR_INFO);
-            button.setOnAction(e -> disposeDialog(dialog, root));
+            button.setOnAction(e -> disposeDialog(dialog));
             return button;
         }
 
-        public static JFXButton getGotoButton(JFXDialog dialog, StackPane root) {
+        public static JFXButton getGotoButton(JFXDialog dialog) {
             JFXButton button = new JFXButton();
             button.setText("前 往");
             button.setStyle("-fx-font-size:13px;-fx-text-fill:" + Colors.COLOR_WHITE + ";-fx-background-color:" + Colors.COLOR_SUCCESS);
-            button.setOnAction(e -> disposeDialog(dialog, root));
+            button.setOnAction(e -> disposeDialog(dialog));
             return button;
         }
 
-        public static JFXButton getTrustButton(JFXDialog dialog, StackPane root) {
+        public static JFXButton getTrustButton(JFXDialog dialog) {
             JFXButton button = new JFXButton();
             button.setText("信 任");
             button.setStyle("-fx-font-size:13px;-fx-text-fill:" + Colors.COLOR_WHITE + ";-fx-background-color:" + Colors.COLOR_WARNING);
-            button.setOnAction(e -> disposeDialog(dialog, root));
+            button.setOnAction(e -> disposeDialog(dialog));
             return button;
         }
     }

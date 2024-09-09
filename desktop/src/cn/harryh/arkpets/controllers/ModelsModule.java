@@ -180,7 +180,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
         } catch (FileNotFoundException e) {
             Logger.warn("ModelManager", "Failed to initialize model dataset due to file not found. (" + e.getMessage() + ")");
             if (doPopNotice) {
-                JFXDialog dialog = GuiPrefabs.DialogUtil.createCommonDialog(app.body,
+                JFXDialog dialog = GuiPrefabs.Dialogs.createCommonDialog(app.body,
                         GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_WARNING_ALT, GuiPrefabs.Colors.COLOR_WARNING),
                         "模型载入失败",
                         "模型未成功载入：未找到数据集。",
@@ -191,7 +191,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
         } catch (ModelsDataset.DatasetKeyException e) {
             Logger.warn("ModelManager", "Failed to initialize model dataset due to dataset parsing error. (" + e.getMessage() + ")");
             if (doPopNotice)
-                GuiPrefabs.DialogUtil.createCommonDialog(app.body,
+                GuiPrefabs.Dialogs.createCommonDialog(app.body,
                         GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_WARNING_ALT, GuiPrefabs.Colors.COLOR_WARNING),
                         "模型载入失败",
                         "模型未成功载入：数据集解析失败。",
@@ -200,7 +200,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
         } catch (IOException e) {
             Logger.error("ModelManager", "Failed to initialize model dataset due to unknown reasons, details see below.", e);
             if (doPopNotice)
-                GuiPrefabs.DialogUtil.createCommonDialog(app.body,
+                GuiPrefabs.Dialogs.createCommonDialog(app.body,
                         GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_WARNING_ALT, GuiPrefabs.Colors.COLOR_WARNING),
                         "模型载入失败",
                         "模型未成功载入：发生意外错误。",
@@ -293,11 +293,11 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
                 @Override
                 protected void onSucceeded(boolean result){
                     // Go to [Step 2/3]:
-                    new UnzipModelsTask(root, GuiTaskStyle.STRICT, PathConfig.tempModelsZipCachePath) {
+                    new UnzipModelsTask(parent, GuiTaskStyle.STRICT, PathConfig.tempModelsZipCachePath) {
                         @Override
                         protected void onSucceeded(boolean result) {
                             // Go to [Step 3/3]:
-                            new PostUnzipModelTask(root, GuiTaskStyle.STRICT) {
+                            new PostUnzipModelTask(parent, GuiTaskStyle.STRICT) {
                                 @Override
                                 protected void onSucceeded(boolean result) {
                                     try {
@@ -348,7 +348,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
                     @Override
                     protected void onSucceeded(boolean result) {
                         // Go to [Step 2/2]:
-                        new PostUnzipModelTask(root, GuiTaskStyle.STRICT) {
+                        new PostUnzipModelTask(parent, GuiTaskStyle.STRICT) {
                             @Override
                             protected void onSucceeded(boolean result) {
                                 app.modelsModule.modelReload(true);
@@ -439,7 +439,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
                     modelCellList = new ArrayList<>();
                     assetItemList = new AssetItemGroup();
                     if (doPopNotice)
-                        GuiPrefabs.DialogUtil.createCommonDialog(app.body,
+                        GuiPrefabs.Dialogs.createCommonDialog(app.body,
                                 GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_WARNING_ALT, GuiPrefabs.Colors.COLOR_WARNING),
                                 "模型载入失败",
                                 "模型未成功载入：读取模型列表失败。",
@@ -582,7 +582,7 @@ public final class ModelsModule implements Controller<ArkHomeFX> {
         if (app.modelsDataset == null) {
             // Not loaded:
             if (doPopNotice)
-                GuiPrefabs.DialogUtil.createCommonDialog(app.body,
+                GuiPrefabs.Dialogs.createCommonDialog(app.body,
                         GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.ICON_WARNING_ALT, GuiPrefabs.Colors.COLOR_WARNING),
                         "未能加载模型",
                         "请确保模型加载成功后再进行此操作。",

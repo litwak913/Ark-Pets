@@ -20,14 +20,14 @@ public class ZipTask extends GuiTask {
     protected final String zipPath;
     protected final Map<String, String> contents;
 
-    public ZipTask(StackPane root, GuiTaskStyle style, String zipPath, Map<String, String> contents) {
-        super(root, style);
+    public ZipTask(StackPane parent, GuiTaskStyle style, String zipPath, Map<String, String> contents) {
+        super(parent, style);
         this.zipPath = zipPath;
         this.contents = contents;
     }
 
-    public ZipTask(StackPane root, GuiTaskStyle style, String zipPath, List<String> contents) {
-        super(root, style);
+    public ZipTask(StackPane parent, GuiTaskStyle style, String zipPath, List<String> contents) {
+        super(parent, style);
         this.zipPath = zipPath;
         this.contents = contents.stream()
                 .collect(Collectors.toMap(
@@ -63,6 +63,6 @@ public class ZipTask extends GuiTask {
     @Override
     protected void onFailed(Throwable e) {
         if (style != GuiTaskStyle.HIDDEN)
-            GuiPrefabs.DialogUtil.createErrorDialog(root, e).show();
+            GuiPrefabs.Dialogs.createErrorDialog(parent, e).show();
     }
 }
