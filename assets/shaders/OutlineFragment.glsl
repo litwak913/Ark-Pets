@@ -11,8 +11,9 @@ uniform sampler2D u_texture;    // From TCPB
 uniform vec3 u_outlineColor;    // Required
 uniform float u_outlineWidth;   // Required
 
-const float c_transparentAlpha = 0.1;
-const float c_seamSampleAlpha = 0.9;
+const float c_alphaLv0 = 0.1;
+const float c_alphaLv1 = 0.5;
+const float c_alphaLv2 = 0.9;
 const float c_seamCoef = 0.5;
 
 vec4[8] getNeighbors(sampler2D tex, vec2 texCoords, vec2 offset) {
@@ -32,7 +33,7 @@ void main() {
     vec4 texColor = texture2D(u_texture, v_texCoords);
     ivec2 texSize = textureSize(u_texture, 0);
 
-    if (texColor.a < c_transparentAlpha) {
+    if (texColor.a < c_alphaLv0) {
         // Outline effect apply on transparent areas
         if (u_outlineWidth > 0.0) {
             vec2 relOutlineSize = vec2(u_outlineWidth * (1.0 / texSize.x), u_outlineWidth * (1.0 / texSize.y));
@@ -41,7 +42,7 @@ void main() {
             for (int i = 0; i < neighbors.length(); i++) {
                 neighborAlpha += neighbors[i].a;
             }
-            if (neighborAlpha > c_transparentAlpha) {
+            if (neighborAlpha > c_alphaLv0) {
                 gl_FragColor.rgb = u_outlineColor.rgb;
                 gl_FragColor.a = min(1.0, neighborAlpha);
             } else {
@@ -50,20 +51,24 @@ void main() {
         } else {
             gl_FragColor = texColor;
         }
-    } else if (texColor.a < c_seamSampleAlpha) {
+    } else if (texColor.a < c_alphaLv1) {
+        // No effect apply on these areas
+        gl_FragColor = texColor;
+    } else if (texColor.a < c_alphaLv2) {
         // Seaming apply on gap areas
         vec2 pixelSize = vec2(1.0 / texSize.x, 1.0 / texSize.y);
         vec4[8] neighbors = getNeighbors(u_texture, v_texCoords, pixelSize);
         vec4 sampleColor = vec4(0.0);
         int sampleSize = 0;
         for (int i = 0; i < neighbors.length(); i++) {
-            if (neighbors[i].a > c_seamSampleAlpha) {
+            if (neighbors[i].a > c_alphaLv2) {
                 sampleColor += neighbors[i];
                 sampleSize += 1;
             }
         }
         if (sampleSize > 0) {
-            gl_FragColor = sampleColor / sampleSize * c_seamCoef + texColor * (1.0 - c_seamCoef);
+            gl_FragColor.rgb = sampleColor.rgb / sampleSize * c_seamCoef + texColor.rgb * (1.0 - c_seamCoef);
+            gl_FragColor.a = sampleColor.a / sampleSize;
         } else {
             gl_FragColor = texColor;
         }
@@ -71,6 +76,4 @@ void main() {
         // No effect apply on other areas
         gl_FragColor = texColor;
     }
-
-    gl_FragColor.a = gl_FragColor.a < 0.5 ? gl_FragColor.a * 2.0 : 1.0;
 }
