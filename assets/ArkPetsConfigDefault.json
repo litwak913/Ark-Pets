@@ -27,5 +27,6 @@
     "render_outline_color":"#FFFF00FF",
     "render_outline_width":2.0,
     "window_style_toolwindow":true,
-    "window_style_topmost":true
+    "window_style_topmost":true,
+    "window_system":0
 }
