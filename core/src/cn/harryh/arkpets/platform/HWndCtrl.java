@@ -7,8 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public abstract class HWndCtrl<T> {
-    public final T hWnd; // Platform HWnd
+public abstract class HWndCtrl {
     public final String windowText;
     public final int posTop;
     public final int posBottom;
@@ -17,40 +16,15 @@ public abstract class HWndCtrl<T> {
     public final int windowWidth;
     public final int windowHeight;
 
-    public HWndCtrl() {
-        hWnd = null;
-        windowText = "";
-        posTop = 0;
-        posBottom = 0;
-        posLeft = 0;
-        posRight = 0;
-        windowWidth = 0;
-        windowHeight = 0;
-    }
-
-    public HWndCtrl(T hWnd) {
-        this.hWnd = hWnd;
-        windowText = getWindowText(hWnd);
-        WindowRect rect = getWindowRect(hWnd);
-        posTop = rect.top;
-        posBottom = rect.bottom;
-        posLeft = rect.left;
-        posRight = rect.right;
+    public HWndCtrl(String windowText, WindowRect windowRect) {
+        this.windowText = windowText;
+        posTop = windowRect.top;
+        posBottom = windowRect.bottom;
+        posLeft = windowRect.left;
+        posRight = windowRect.right;
         windowWidth = posRight - posLeft;
         windowHeight = posBottom - posTop;
     }
-
-    /** Returns window rect.
-     */
-    public abstract WindowRect getWindowRect(T hWnd);
-
-    /** Returns window title.
-     */
-    public abstract String getWindowText(T hWnd);
-
-    /** Returns true if the handle is empty.
-     */
-    public abstract boolean isEmpty();
 
     /** Returns true if the window is a foreground window now.
      */
@@ -80,6 +54,11 @@ public abstract class HWndCtrl<T> {
      */
     public abstract boolean close(int timeout);
 
+    /** Gets a new HWndCtrl which contains the updated information of this window.
+     * @return The up-to-dated HWndCtrl.
+     */
+    public abstract HWndCtrl updated();
+
     /** Sets the window as the foreground window.
      */
     public abstract void setForeground();
@@ -96,12 +75,12 @@ public abstract class HWndCtrl<T> {
      * @param w The new width of the window, in pixels.
      * @param h The new height of the window, in pixels.
      */
-    public abstract void setWindowPosition(HWndCtrl<T> insertAfter, int x, int y, int w, int h);
+    public abstract void setWindowPosition(HWndCtrl insertAfter, int x, int y, int w, int h);
 
     /** Sets the window's ability to be passed through.
-     * @param transparent Whether the window can be passed through.
+     * @param enable Whether the window can be passed through.
      */
-    public abstract void setWindowTransparent(boolean transparent);
+    public abstract void setWindowTransparent(boolean enable);
 
     /** Sets the window's tool window style.
      * @param enable Whether to enable the tool window style.
@@ -126,18 +105,10 @@ public abstract class HWndCtrl<T> {
     public abstract void sendMouseEvent(MouseEvent msg, int x, int y);
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        HWndCtrl hWndCtrl = (HWndCtrl)o;
-        return hWnd.equals(hWndCtrl.hWnd);
-    }
+    public abstract boolean equals(Object o);
 
     @Override
-    public int hashCode() {
-        return hWnd.hashCode();
-    }
+    public abstract int hashCode();
 
     @Override
     public String toString() {
@@ -158,8 +129,8 @@ public abstract class HWndCtrl<T> {
             numberedNamePattern = Pattern.compile("^" + coreName + " \\(([0-9]+)\\)");
         }
 
-        public int getNumber(HWndCtrl<?> hWndCtrl) {
-            if (hWndCtrl.isEmpty()) return -1;
+        public int getNumber(HWndCtrl hWndCtrl) {
+            if (hWndCtrl == null) return -1;
             return getNumber(hWndCtrl.windowText);
         }
 
@@ -176,12 +147,12 @@ public abstract class HWndCtrl<T> {
 
         public String getIdleTitle() {
             String title = String.format(zeroNameFormat);
-            if (HWndCtrlFactory.find(null, title) == null) {
+            if (WindowSystem.findWindow(null, title) == null) {
                 return title;
             } else {
                 for (int cur = 2; cur <= 1024; cur++) {
                     title = String.format(numberedNameFormat, cur);
-                    if (HWndCtrlFactory.find(null, title) == null)
+                    if (WindowSystem.findWindow(null, title) == null)
                         return title;
                 }
                 throw new IllegalStateException("Failed to get idle title.");
@@ -189,20 +160,9 @@ public abstract class HWndCtrl<T> {
         }
     }
 
-    public static class WindowRect {
-        public int top;
-        public int bottom;
-        public int right;
-        public int left;
-
+    public record WindowRect(int top, int bottom, int right, int left) {
         public WindowRect() {
-        }
-
-        public WindowRect(int x, int y, int h, int w) {
-            this.top = y;
-            this.left = x;
-            this.bottom = y + h;
-            this.right = x + w;
+            this(0, 0, 0, 0);
         }
     }
 

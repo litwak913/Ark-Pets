@@ -14,8 +14,9 @@ import com.sun.jna.platform.win32.WinUser;
 import java.util.ArrayList;
 
 
-public class User32HWndCtrl extends HWndCtrl<HWND> {
-    public final Pointer windowPointer;
+public class User32HWndCtrl extends HWndCtrl {
+    protected final HWND hWnd;
+    protected final Pointer windowPointer;
 
     public static final int WS_EX_TOPMOST       = 0x00000008;
     public static final int WS_EX_TRANSPARENT   = 0x00000020;
@@ -38,8 +39,9 @@ public class User32HWndCtrl extends HWndCtrl<HWND> {
     /** HWnd Controller instance.
      * @param hWnd The handle of the window.
      */
-    public User32HWndCtrl(HWND hWnd) {
-        super(hWnd);
+    protected User32HWndCtrl(HWND hWnd) {
+        super(getWindowText(hWnd), getWindowRect(hWnd));
+        this.hWnd = hWnd;
         windowPointer = getWindowIdx(hWnd);
     }
 
@@ -47,7 +49,7 @@ public class User32HWndCtrl extends HWndCtrl<HWND> {
      * @param className The class name of the window.
      * @param windowName The title of the window.
      */
-    public static HWndCtrl<HWND> find(String className, String windowName) {
+    public static HWndCtrl find(String className, String windowName) {
         HWND hwnd = User32.INSTANCE.FindWindow(className, windowName);
         if (hwnd != null) {
             return new User32HWndCtrl(hwnd);
@@ -55,35 +57,24 @@ public class User32HWndCtrl extends HWndCtrl<HWND> {
         return null;
     }
 
-    /** HWnd Controller instance.
-     * @param pointer The pointer.
-     */
-    public User32HWndCtrl(int pointer) {
-        this(new HWND(Pointer.createConstant(pointer)));
-    }
-
-    /** Empty HWnd Controller instance.
-     */
-    public User32HWndCtrl() {
-        super();
-        windowPointer = null;
-    }
-
-    public boolean isEmpty() {
-        return hWnd == null;
-    }
-
+    @Override
     public boolean isForeground() {
-        if (isEmpty()) return false;
         return hWnd.equals(User32.INSTANCE.GetForegroundWindow());
     }
 
+    @Override
     public boolean isVisible() {
         return visible(hWnd);
     }
 
+    @Override
     public boolean close(int timeout) {
         return User32.INSTANCE.SendMessageTimeout(hWnd, 0x10, null, null, timeout, WinUser.SMTO_NORMAL, null).intValue() == 0;
+    }
+
+    @Override
+    public HWndCtrl updated() {
+        return new User32HWndCtrl(hWnd);
     }
 
     /** Gets the value of the window's extended styles.
@@ -91,19 +82,16 @@ public class User32HWndCtrl extends HWndCtrl<HWND> {
      * @see WinUser
      */
     public int getWindowExStyle() {
-        if (isEmpty()) return 0;
         return User32.INSTANCE.GetWindowLong(hWnd, WinUser.GWL_EXSTYLE);
     }
 
+    @Override
     public void setForeground() {
         User32.INSTANCE.SetForegroundWindow(hWnd);
     }
 
-    /** Sets the window's transparency.
-     * @param alpha Alpha value, from 0 to 1.
-     */
+    @Override
     public void setWindowAlpha(float alpha) {
-        if (isEmpty()) return;
         alpha = Math.max(0, Math.min(1, alpha));
         byte byteAlpha = (byte)((int)(alpha * 255) & 0xFF);
         User32.INSTANCE.SetLayeredWindowAttributes(hWnd, 0, byteAlpha, User32.LWA_ALPHA);
@@ -114,47 +102,47 @@ public class User32HWndCtrl extends HWndCtrl<HWND> {
      * @see WinUser
      */
     public void setWindowExStyle(int newLong) {
-        if (isEmpty()) return;
         User32.INSTANCE.SetWindowLong(hWnd, WinUser.GWL_EXSTYLE, newLong);
     }
 
-    public void setWindowPosition(HWndCtrl<HWND> insertAfter, int x, int y, int w, int h) {
-        if (isEmpty()) return;
-        User32.INSTANCE.SetWindowPos(hWnd, insertAfter.hWnd, x, y, w, h, WinUser.SWP_NOACTIVATE);
+    @Override
+    public void setWindowPosition(HWndCtrl insertAfter, int x, int y, int w, int h) {
+        User32.INSTANCE.SetWindowPos(hWnd, ((User32HWndCtrl)insertAfter).hWnd, x, y, w, h, WinUser.SWP_NOACTIVATE);
     }
 
-    public void setWindowTransparent(boolean transparent) {
-        if (isEmpty()) return;
-        if (transparent)
+    @Override
+    public void setWindowTransparent(boolean enable) {
+        if (enable)
             setWindowExStyle(getWindowExStyle() | User32HWndCtrl.WS_EX_TRANSPARENT);
         else
             setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_TRANSPARENT);
     }
 
+    @Override
     public void setToolWindow(boolean enable) {
-        if (isEmpty()) return;
         if (enable)
             setWindowExStyle(getWindowExStyle() | User32HWndCtrl.WS_EX_TOOLWINDOW);
         else
             setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_TOOLWINDOW);
     }
 
+    @Override
     public void setLayered(boolean enable) {
-        if (isEmpty()) return;
         if (enable)
             setWindowExStyle(getWindowExStyle() | User32HWndCtrl.WS_EX_LAYERED);
         else
             setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_LAYERED);
     }
 
+    @Override
     public void setTopmost(boolean enable) {
-        if (isEmpty()) return;
         if (enable)
             setWindowExStyle(getWindowExStyle() | User32HWndCtrl.WS_EX_TOPMOST);
         else
             setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_TOPMOST);
     }
 
+    @Override
     public void sendMouseEvent(MouseEvent msg, int x, int y) {
         int wmsg = switch (msg) {
             case MOUSEMOVE -> WM_MOUSEMOVE;
@@ -210,15 +198,15 @@ public class User32HWndCtrl extends HWndCtrl<HWND> {
      * @return The topmost window's HWndCtrl.
      */
     public static User32HWndCtrl getTopmost() {
-        return new User32HWndCtrl(-1);
+        return new User32HWndCtrl(new HWND(Pointer.createConstant(-1)));
     }
 
     private static boolean visible(HWND hWnd) {
         try {
             if (!User32.INSTANCE.IsWindowVisible(hWnd) || !User32.INSTANCE.IsWindowEnabled(hWnd))
                 return false;
-            WindowRect rect = getRect(hWnd);
-            if (rect.top == rect.bottom || rect.left == rect.right)
+            WindowRect rect = getWindowRect(hWnd);
+            if (rect.top() == rect.bottom() || rect.left() == rect.right())
                 return false;
         } catch (Exception e) {
             return false;
@@ -230,25 +218,16 @@ public class User32HWndCtrl extends HWndCtrl<HWND> {
         return hWnd.getPointer();
     }
 
-    public String getWindowText(HWND hWnd) {
+    public static String getWindowText(HWND hWnd) {
         char[] text = new char[1024];
         User32.INSTANCE.GetWindowText(hWnd, text, 1024);
         return Native.toString(text);
     }
 
-    private static WindowRect getRect(HWND hWnd) {
+    public static WindowRect getWindowRect(HWND hWnd) {
         RECT rect = new RECT();
         User32.INSTANCE.GetWindowRect(hWnd, rect);
-        WindowRect newRect = new WindowRect();
-        newRect.top = rect.top;
-        newRect.bottom = rect.bottom;
-        newRect.left = rect.left;
-        newRect.right = rect.right;
-        return newRect;
-    }
-
-    public WindowRect getWindowRect(HWND hWnd) {
-        return getRect(hWnd);
+        return new WindowRect(rect.top, rect.bottom, rect.left, rect.right);
     }
 
     @Override

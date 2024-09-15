@@ -4,7 +4,7 @@
 package cn.harryh.arkpets;
 
 import cn.harryh.arkpets.utils.ArgPending;
-import cn.harryh.arkpets.platform.HWndCtrlFactory;
+import cn.harryh.arkpets.platform.WindowSystem;
 import cn.harryh.arkpets.utils.Logger;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
@@ -58,7 +58,7 @@ public class EmbeddedLauncher {
         Logger.debug("System", "Default charset is " + Charset.defaultCharset());
 
         try {
-            HWndCtrlFactory.init();
+            WindowSystem.init();
             Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
             // Configure FPS
             config.setForegroundFPS(fpsDefault);
