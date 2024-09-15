@@ -165,7 +165,6 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 	@Override
 	public void dispose() {
 		Logger.info("App", "Dispose");
-		HWndCtrlFactory.free();
 	}
 
 	/* INTERFACES */
@@ -439,7 +438,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 					isToolwindowStyle = true;
 					break;
 				}
-				hWndMine.setForeground();
+                hWndMine.setForeground();
 			}
 		}
 	}

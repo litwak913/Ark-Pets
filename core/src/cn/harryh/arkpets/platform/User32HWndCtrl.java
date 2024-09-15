@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 public class User32HWndCtrl extends HWndCtrl {
     protected final HWND hWnd;
-    protected final Pointer windowPointer;
 
     public static final int WS_EX_TOPMOST       = 0x00000008;
     public static final int WS_EX_TRANSPARENT   = 0x00000020;
@@ -42,7 +41,6 @@ public class User32HWndCtrl extends HWndCtrl {
     protected User32HWndCtrl(HWND hWnd) {
         super(getWindowText(hWnd), getWindowRect(hWnd));
         this.hWnd = hWnd;
-        windowPointer = getWindowIdx(hWnd);
     }
 
     /** Finds a window.
@@ -64,7 +62,7 @@ public class User32HWndCtrl extends HWndCtrl {
 
     @Override
     public boolean isVisible() {
-        return visible(hWnd);
+        return isVisible(hWnd);
     }
 
     @Override
@@ -77,14 +75,6 @@ public class User32HWndCtrl extends HWndCtrl {
         return new User32HWndCtrl(hWnd);
     }
 
-    /** Gets the value of the window's extended styles.
-     * @return EX_STYLE value.
-     * @see WinUser
-     */
-    public int getWindowExStyle() {
-        return User32.INSTANCE.GetWindowLong(hWnd, WinUser.GWL_EXSTYLE);
-    }
-
     @Override
     public void setForeground() {
         User32.INSTANCE.SetForegroundWindow(hWnd);
@@ -95,14 +85,6 @@ public class User32HWndCtrl extends HWndCtrl {
         alpha = Math.max(0, Math.min(1, alpha));
         byte byteAlpha = (byte)((int)(alpha * 255) & 0xFF);
         User32.INSTANCE.SetLayeredWindowAttributes(hWnd, 0, byteAlpha, User32.LWA_ALPHA);
-    }
-
-    /** Sets the window's extended styles.
-     * @param newLong New EX_STYLE value.
-     * @see WinUser
-     */
-    public void setWindowExStyle(int newLong) {
-        User32.INSTANCE.SetWindowLong(hWnd, WinUser.GWL_EXSTYLE, newLong);
     }
 
     @Override
@@ -171,7 +153,7 @@ public class User32HWndCtrl extends HWndCtrl {
     public static ArrayList<User32HWndCtrl> getWindowList(boolean only_visible) {
         ArrayList<User32HWndCtrl> windowList = new ArrayList<>();
         User32.INSTANCE.EnumWindows((hWnd, arg1) -> {
-            if (User32.INSTANCE.IsWindow(hWnd) && (!only_visible || visible(hWnd)))
+            if (User32.INSTANCE.IsWindow(hWnd) && (!only_visible || isVisible(hWnd)))
                 windowList.add(new User32HWndCtrl(hWnd));
             return true;
         }, null);
@@ -186,7 +168,7 @@ public class User32HWndCtrl extends HWndCtrl {
     public static ArrayList<User32HWndCtrl> getWindowList(boolean only_visible, long exclude_ws_ex) {
         ArrayList<User32HWndCtrl> windowList = new ArrayList<>();
         User32.INSTANCE.EnumWindows((hWnd, arg1) -> {
-            if (User32.INSTANCE.IsWindow(hWnd) && (!only_visible || visible(hWnd))
+            if (User32.INSTANCE.IsWindow(hWnd) && (!only_visible || isVisible(hWnd))
                     && (User32.INSTANCE.GetWindowLong(hWnd, WinUser.GWL_EXSTYLE) & exclude_ws_ex) != exclude_ws_ex)
                 windowList.add(new User32HWndCtrl(hWnd));
             return true;
@@ -194,14 +176,42 @@ public class User32HWndCtrl extends HWndCtrl {
         return windowList;
     }
 
+    /** Gets the value of the window's extended styles.
+     * @return EX_STYLE value.
+     * @see WinUser
+     */
+    protected int getWindowExStyle() {
+        return User32.INSTANCE.GetWindowLong(hWnd, WinUser.GWL_EXSTYLE);
+    }
+
+    /** Sets the window's extended styles.
+     * @param newLong New EX_STYLE value.
+     * @see WinUser
+     */
+    protected void setWindowExStyle(int newLong) {
+        User32.INSTANCE.SetWindowLong(hWnd, WinUser.GWL_EXSTYLE, newLong);
+    }
+
     /** Gets the topmost window.
      * @return The topmost window's HWndCtrl.
      */
-    public static User32HWndCtrl getTopmost() {
+    protected static User32HWndCtrl getTopmostWindow() {
         return new User32HWndCtrl(new HWND(Pointer.createConstant(-1)));
     }
 
-    private static boolean visible(HWND hWnd) {
+    protected static String getWindowText(HWND hWnd) {
+        char[] text = new char[1024];
+        User32.INSTANCE.GetWindowText(hWnd, text, 1024);
+        return Native.toString(text);
+    }
+
+    protected static WindowRect getWindowRect(HWND hWnd) {
+        RECT rect = new RECT();
+        User32.INSTANCE.GetWindowRect(hWnd, rect);
+        return new WindowRect(rect.top, rect.bottom, rect.left, rect.right);
+    }
+
+    protected static boolean isVisible(HWND hWnd) {
         try {
             if (!User32.INSTANCE.IsWindowVisible(hWnd) || !User32.INSTANCE.IsWindowEnabled(hWnd))
                 return false;
@@ -212,22 +222,6 @@ public class User32HWndCtrl extends HWndCtrl {
             return false;
         }
         return true;
-    }
-
-    private static Pointer getWindowIdx(HWND hWnd) {
-        return hWnd.getPointer();
-    }
-
-    public static String getWindowText(HWND hWnd) {
-        char[] text = new char[1024];
-        User32.INSTANCE.GetWindowText(hWnd, text, 1024);
-        return Native.toString(text);
-    }
-
-    public static WindowRect getWindowRect(HWND hWnd) {
-        RECT rect = new RECT();
-        User32.INSTANCE.GetWindowRect(hWnd, rect);
-        return new WindowRect(rect.top, rect.bottom, rect.left, rect.right);
     }
 
     @Override

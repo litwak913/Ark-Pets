@@ -84,7 +84,7 @@ public enum WindowSystem {
     public static HWndCtrl getTopmostWindow() {
         switch (PLATFORM) {
             case USER32 -> {
-                return User32HWndCtrl.getTopmost();
+                return User32HWndCtrl.getTopmostWindow();
             }
             default -> {
                 return new NullHWndCtrl();
