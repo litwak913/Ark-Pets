@@ -20,6 +20,7 @@ public class User32HWndCtrl extends HWndCtrl {
     public static final int WS_EX_TOPMOST       = 0x00000008;
     public static final int WS_EX_TRANSPARENT   = 0x00000020;
     public static final int WS_EX_TOOLWINDOW    = 0x00000080;
+    public static final int WS_EX_APPWINDOW     = 0x00040000;
     public static final int WS_EX_LAYERED       = 0x00080000;
 
     public static final int WM_MOUSEMOVE    = 0x0200;
@@ -93,19 +94,12 @@ public class User32HWndCtrl extends HWndCtrl {
     }
 
     @Override
-    public void setWindowTransparent(boolean enable) {
+    public void setTaskbar(boolean enable) {
+        // On Windows, this is implemented by toggle app-window ex-style and tool-window ex-style.
         if (enable)
-            setWindowExStyle(getWindowExStyle() | User32HWndCtrl.WS_EX_TRANSPARENT);
+            setWindowExStyle((getWindowExStyle() & ~User32HWndCtrl.WS_EX_TOOLWINDOW) | User32HWndCtrl.WS_EX_APPWINDOW);
         else
-            setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_TRANSPARENT);
-    }
-
-    @Override
-    public void setToolWindow(boolean enable) {
-        if (enable)
-            setWindowExStyle(getWindowExStyle() | User32HWndCtrl.WS_EX_TOOLWINDOW);
-        else
-            setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_TOOLWINDOW);
+            setWindowExStyle((getWindowExStyle() | User32HWndCtrl.WS_EX_TOOLWINDOW) & ~User32HWndCtrl.WS_EX_APPWINDOW);
     }
 
     @Override
@@ -122,6 +116,14 @@ public class User32HWndCtrl extends HWndCtrl {
             setWindowExStyle(getWindowExStyle() | User32HWndCtrl.WS_EX_TOPMOST);
         else
             setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_TOPMOST);
+    }
+
+    @Override
+    public void setTransparent(boolean enable) {
+        if (enable)
+            setWindowExStyle(getWindowExStyle() | User32HWndCtrl.WS_EX_TRANSPARENT);
+        else
+            setWindowExStyle(getWindowExStyle() & ~User32HWndCtrl.WS_EX_TRANSPARENT);
     }
 
     @Override
@@ -240,6 +242,7 @@ public class User32HWndCtrl extends HWndCtrl {
 
     @Override
     public String toString() {
-        return "‘" + windowText + "’ " + windowWidth + "*" + windowHeight + " style=" + getWindowExStyle();
+        return "‘" + windowText + "’ " + windowWidth + "*" + windowHeight +
+                " ex-style=0x" + Integer.toHexString(getWindowExStyle());
     }
 }

@@ -77,15 +77,10 @@ public abstract class HWndCtrl {
      */
     public abstract void setWindowPosition(HWndCtrl insertAfter, int x, int y, int w, int h);
 
-    /** Sets the window's ability to be passed through.
-     * @param enable Whether the window can be passed through.
+    /** Sets the window's taskbar visibility.
+     * @param enable Whether to let the window's entry visible on the taskbar.
      */
-    public abstract void setWindowTransparent(boolean enable);
-
-    /** Sets the window's tool window style.
-     * @param enable Whether to enable the tool window style.
-     */
-    public abstract void setToolWindow(boolean enable);
+    public abstract void setTaskbar(boolean enable);
 
     /** Sets the window's layered style.
      * @param enable Whether to enable the window's layered style.
@@ -96,6 +91,11 @@ public abstract class HWndCtrl {
      * @param enable Whether to enable the topmost style.
      */
     public abstract void setTopmost(boolean enable);
+
+    /** Sets the window's ability to be passed through.
+     * @param enable Whether the window can be passed through.
+     */
+    public abstract void setTransparent(boolean enable);
 
     /** Sends a mouse event message to the window.
      * @param msg The window message value.
@@ -160,7 +160,7 @@ public abstract class HWndCtrl {
         }
     }
 
-    public record WindowRect(int top, int bottom, int right, int left) {
+    public record WindowRect(int top, int bottom, int left, int right) {
         public WindowRect() {
             this(0, 0, 0, 0);
         }

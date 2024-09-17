@@ -95,10 +95,8 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 		windowAlpha.reset(1f);
 		hWndMine = WindowSystem.findWindow(null, APP_TITLE);
 		hWndMine.setLayered(true);
-		if(config.window_style_topmost){
+		if(config.window_style_topmost)
 			hWndMine.setTopmost(true);
-		}
-		//hWndMine.setWindowExStyle(HWndCtrl.WS_EX_LAYERED | (config.window_style_topmost ? HWndCtrl.WS_EX_TOPMOST : 0));
 		promiseToolwindowStyle(1000);
 
 		// 6.Tray icon setup
@@ -324,7 +322,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 			refreshMonitorInfo();
 			HWndCtrl new_hwnd_topmost = refreshWindowIndex();
 			hWndTopmost = new_hwnd_topmost != hWndTopmost ? new_hwnd_topmost : hWndTopmost;
-			hWndMine.setWindowTransparent(isAlwaysTransparent);
+			hWndMine.setTransparent(isAlwaysTransparent);
 			isFocused = hWndMine.isForeground();
 		}
 		hWndMine.setWindowPosition(hWndTopmost,
@@ -432,8 +430,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 			// Make sure ArkPets has been set as foreground window once
 			for (int i = 0; i < maxRetries; i++) {
 				if (hWndMine.isForeground()) {
-					hWndMine.setToolWindow(true);
-					//hWndMine.setWindowExStyle(hWndMine.getWindowExStyle() | HWndCtrl.WS_EX_TOOLWINDOW);
+					hWndMine.setTaskbar(false);
 					Logger.info("Window", "SetForegroundWindow succeeded");
 					isToolwindowStyle = true;
 					break;

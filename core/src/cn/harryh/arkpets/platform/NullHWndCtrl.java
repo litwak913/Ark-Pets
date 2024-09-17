@@ -42,11 +42,7 @@ public class NullHWndCtrl extends HWndCtrl {
     }
 
     @Override
-    public void setWindowTransparent(boolean enable) {
-    }
-
-    @Override
-    public void setToolWindow(boolean enable) {
+    public void setTaskbar(boolean enable) {
     }
 
     @Override
@@ -55,6 +51,10 @@ public class NullHWndCtrl extends HWndCtrl {
 
     @Override
     public void setTopmost(boolean enable) {
+    }
+
+    @Override
+    public void setTransparent(boolean enable) {
     }
 
     @Override
