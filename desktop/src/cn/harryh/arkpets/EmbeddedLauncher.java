@@ -8,7 +8,6 @@ import cn.harryh.arkpets.platform.WindowSystem;
 import cn.harryh.arkpets.utils.Logger;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.graphics.Color;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.system.MemoryUtil;
@@ -26,11 +25,12 @@ public class EmbeddedLauncher {
     // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 
     public static void main (String[] args) {
+        ArkConfig appConfig = Objects.requireNonNull(ArkConfig.getConfig());
         ArgPending.argCache = args;
         // Logger
         Logger.initialize(LogConfig.logCorePath, LogConfig.logCoreMaxKeep);
         try {
-            Logger.setLevel(Objects.requireNonNull(ArkConfig.getConfig()).logging_level);
+            Logger.setLevel(appConfig.logging_level);
         } catch (Exception ignored) {
         }
         new ArgPending(LogConfig.errorArg, args) {
@@ -74,7 +74,7 @@ public class EmbeddedLauncher {
             // Configure window display
             config.setInitialVisible(true);
             config.setTransparentFramebuffer(true);
-            config.setInitialBackgroundColor(Color.CLEAR);
+            config.setInitialBackgroundColor(appConfig.getBackgroundColor());
             // Handle GLFW error
             GLFW.glfwSetErrorCallback(new GLFWErrorCallback() {
                 @Override
