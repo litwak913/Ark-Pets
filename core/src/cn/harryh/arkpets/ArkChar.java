@@ -28,6 +28,7 @@ import com.esotericsoftware.spine.utils.TwoColorPolygonBatch;
 
 import java.util.HashMap;
 
+import static cn.harryh.arkpets.ArkConfig.getWorkingDirectory;
 import static cn.harryh.arkpets.Const.*;
 import static java.io.File.separator;
 
@@ -80,7 +81,7 @@ public class ArkChar {
         // 3.Skeleton setup
         SkeletonData skeletonData;
         try {
-            String assetLocation = config.character_asset;
+            String assetLocation = getWorkingDirectory() + config.character_asset;
             AssetAccessor assetAccessor = new AssetAccessor(config.character_files);
             String path2atlas = assetLocation + separator + assetAccessor.getFirstFileOf(".atlas");
             String path2skel = assetLocation + separator + assetAccessor.getFirstFileOf(".skel");
