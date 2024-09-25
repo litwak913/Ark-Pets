@@ -39,7 +39,7 @@ public class ArkConfig implements Serializable {
 
 
     // Config items and default values:
-    /** @since ArkPets 3.4 */ @JSONField(defaultValue = "#00000000")
+    /** @since ArkPets 3.3 */ @JSONField(defaultValue = "#00000000")
     public String       background_color;
     /** @since ArkPets 1.0 */ @JSONField(defaultValue = "8")
     public int          behavior_ai_activation;

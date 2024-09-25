@@ -25,10 +25,10 @@ public class EmbeddedLauncher {
     // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 
     public static void main (String[] args) {
-        ArkConfig appConfig = Objects.requireNonNull(ArkConfig.getConfig());
         ArgPending.argCache = args;
         // Logger
         Logger.initialize(LogConfig.logCorePath, LogConfig.logCoreMaxKeep);
+        ArkConfig appConfig = Objects.requireNonNull(ArkConfig.getConfig());
         try {
             Logger.setLevel(appConfig.logging_level);
         } catch (Exception ignored) {
