@@ -119,9 +119,9 @@ public class ArkConfig implements Serializable {
     @JSONField(serialize = false)
     public Color getBackgroundColor() {
         Color backgroundColor;
-        try {
+        if (background_color.matches("^#[0-9a-fA-F]{8}$")) {
             backgroundColor = Color.valueOf(background_color);
-        } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
+        } else {
             Logger.warn("System", "Invalid background color,using transparent");
             backgroundColor = Color.CLEAR;
         }
