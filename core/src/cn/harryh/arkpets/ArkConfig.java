@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.graphics.Color;
 
 import java.io.*;
 import java.net.URL;
@@ -38,6 +39,8 @@ public class ArkConfig implements Serializable {
 
 
     // Config items and default values:
+    /** @since ArkPets 3.3 */ @JSONField(defaultValue = "#00000000")
+    public String       background_color;
     /** @since ArkPets 1.0 */ @JSONField(defaultValue = "8")
     public int          behavior_ai_activation;
     /** @since ArkPets 1.0 */ @JSONField(defaultValue = "true")
@@ -109,6 +112,20 @@ public class ArkConfig implements Serializable {
     @JSONField(serialize = false)
     public boolean isNewcomer() {
         return isNewcomer;
+    }
+
+    /** Returns converted background color.
+     */
+    @JSONField(serialize = false)
+    public Color getBackgroundColor() {
+        Color backgroundColor;
+        if (background_color.matches("^#[0-9a-fA-F]{8}$")) {
+            backgroundColor = Color.valueOf(background_color);
+        } else {
+            Logger.warn("System", "Invalid background color,using transparent");
+            backgroundColor = Color.CLEAR;
+        }
+        return backgroundColor;
     }
 
     /** Gets the custom ArkConfig object by reading the external config file.

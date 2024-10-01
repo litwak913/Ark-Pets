@@ -51,6 +51,8 @@ public class ArkChar {
     protected final AnimClipGroup animList;
     protected final HashMap<AnimStage, Insert> stageInsertMap;
 
+    protected float alpha;
+
     /** Initializes an ArkPets character.
      * @param config The ArkPets Config instance which contains the asset's information and other essential settings.
      * @param scale The scale of the skeleton.
@@ -62,6 +64,7 @@ public class ArkChar {
         camera.setMinInsert(canvasReserveLength - canvasMaxSize);
         batch = new TwoColorPolygonBatch();
         renderer = new SkeletonRenderer();
+        Color backgroundColor = config.getBackgroundColor();
         /* Pre-multiplied alpha shouldn't be applied to models released in Arknights 2.1.41 or later,
         otherwise you may get a corrupted rendering result. */
         renderer.setPremultipliedAlpha(false);
@@ -120,7 +123,7 @@ public class ArkChar {
             }
         };
         // 6.Canvas setup
-        setCanvas(Color.CLEAR);
+        setCanvas(backgroundColor);
         stageInsertMap = new HashMap<>();
         for (AnimStage stage : animList.clusterByStage().keySet()) {
             // Figure out the suitable canvas size
@@ -227,6 +230,8 @@ public class ArkChar {
         shader2.bind();
         shader2.setUniformf("u_outlineColor", 1f, 1f, 0f);
         shader2.setUniformf("u_outlineWidth", outlineWidth.now());
+        shader2.setUniformi("u_textureSize", passedTexture.getWidth(), passedTexture.getHeight());
+        shader2.setUniformf("u_alpha", alpha);
         batch.setShader(shader2);
         ScreenUtils.clear(0, 0, 0, 0, true);
         batch.begin();

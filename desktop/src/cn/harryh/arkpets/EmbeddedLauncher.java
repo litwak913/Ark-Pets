@@ -8,7 +8,6 @@ import cn.harryh.arkpets.platform.WindowSystem;
 import cn.harryh.arkpets.utils.Logger;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.graphics.Color;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.system.MemoryUtil;
@@ -29,8 +28,9 @@ public class EmbeddedLauncher {
         ArgPending.argCache = args;
         // Logger
         Logger.initialize(LogConfig.logCorePath, LogConfig.logCoreMaxKeep);
+        ArkConfig appConfig = Objects.requireNonNull(ArkConfig.getConfig());
         try {
-            Logger.setLevel(Objects.requireNonNull(ArkConfig.getConfig()).logging_level);
+            Logger.setLevel(appConfig.logging_level);
         } catch (Exception ignored) {
         }
         new ArgPending(LogConfig.errorArg, args) {
@@ -74,7 +74,7 @@ public class EmbeddedLauncher {
             // Configure window display
             config.setInitialVisible(true);
             config.setTransparentFramebuffer(true);
-            config.setInitialBackgroundColor(Color.CLEAR);
+            config.setInitialBackgroundColor(appConfig.getBackgroundColor());
             // Handle GLFW error
             GLFW.glfwSetErrorCallback(new GLFWErrorCallback() {
                 @Override
