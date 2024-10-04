@@ -3,6 +3,8 @@
  */
 package cn.harryh.arkpets.concurrent;
 
+import cn.harryh.arkpets.utils.Logger;
+import com.alibaba.fastjson2.JSONException;
 import com.alibaba.fastjson2.JSONObject;
 
 import java.io.BufferedReader;
@@ -34,6 +36,8 @@ public class PortUtils {
                 in.close();
                 if (socketData.operation == SocketData.Operation.HANDSHAKE_RESPONSE)
                     return serverPort;
+            } catch (JSONException ignored) {
+                Logger.error("SocketServer", String.format("Port %d is already occupied and is not occupied by ArkPets", serverPort));
             } catch (IOException ignored) {
             }
         }
