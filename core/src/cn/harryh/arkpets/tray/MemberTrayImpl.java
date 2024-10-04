@@ -94,7 +94,7 @@ public class MemberTrayImpl extends MemberTray {
         Logger.info("MemberTray", "Request to exit");
         remove();
         client.disconnect();
-        arkPets.windowAlpha.reset(0f);
+        arkPets.cha.setAlpha(0f);
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -117,8 +117,7 @@ public class MemberTrayImpl extends MemberTray {
     @Override
     public void onTransparentDis() {
         Logger.info("MemberTray", "Transparent disabled");
-        arkPets.windowAlpha.reset(1f);
-        arkPets.setAlwaysTransparent(false);
+        arkPets.setTransparentMode(false);
         popMenu.remove(optTransparentDis);
         popMenu.add(optTransparentEn, 2);
     }
@@ -126,8 +125,7 @@ public class MemberTrayImpl extends MemberTray {
     @Override
     public void onTransparentEn() {
         Logger.info("MemberTray", "Transparent enabled");
-        arkPets.windowAlpha.reset(0.75f);
-        arkPets.setAlwaysTransparent(true);
+        arkPets.setTransparentMode(true);
         popMenu.remove(optTransparentEn);
         popMenu.add(optTransparentDis, 2);
     }

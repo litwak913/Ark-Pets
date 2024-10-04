@@ -46,7 +46,7 @@ public final class BehaviorModule implements Controller<ArkHomeFX> {
     @FXML
     private JFXButton toggleConfigDeployPosition;
     @FXML
-    public HBox wrapperConfigDeployPosition;
+    private HBox wrapperConfigDeployPosition;
     @FXML
     private Canvas configDeployPosition;
     @FXML

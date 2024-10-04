@@ -40,6 +40,7 @@ public class ArkChar {
     private Texture bgTexture;
     private final TransitionFloat offsetY;
     private final TransitionFloat outlineWidth;
+    private final TransitionFloat alpha;
 
     private final ShaderProgram shader1;
     private final ShaderProgram shader2;
@@ -50,8 +51,6 @@ public class ArkChar {
     private final AnimationState animationState;
     protected final AnimClipGroup animList;
     protected final HashMap<AnimStage, Insert> stageInsertMap;
-
-    protected float alpha;
 
     /** Initializes an ArkPets character.
      * @param config The ArkPets Config instance which contains the asset's information and other essential settings.
@@ -76,6 +75,7 @@ public class ArkChar {
         position = new TransitionVector3(TernaryFunction.EASE_OUT_CUBIC, (float)durationNormal.toSeconds());
         offsetY = new TransitionFloat(TernaryFunction.EASE_OUT_CUBIC, (float)durationNormal.toSeconds());
         outlineWidth = new TransitionFloat(TernaryFunction.EASE_OUT_CUBIC, (float)durationFast.toSeconds());
+        alpha = new TransitionFloat(TernaryFunction.EASE_OUT_CUBIC, (float)durationNormal.toSeconds());
         // 3.Skeleton setup
         SkeletonData skeletonData;
         try {
@@ -167,6 +167,13 @@ public class ArkChar {
         outlineWidth.reset(width);
     }
 
+    /** Requests to set the alpha value of the renderer.
+     * @param newAlpha The new alpha value.
+     */
+    public void setAlpha(float newAlpha) {
+        alpha.reset(newAlpha);
+    }
+
     /** Get the animation playing.
      * @return The animation data.
      */
@@ -206,6 +213,7 @@ public class ArkChar {
         position.addProgress(Gdx.graphics.getDeltaTime());
         offsetY.addProgress(Gdx.graphics.getDeltaTime());
         outlineWidth.addProgress(Gdx.graphics.getDeltaTime());
+        alpha.addProgress(Gdx.graphics.getDeltaTime());
         skeleton.setPosition(position.now().x, position.now().y + offsetY.now());
         skeleton.setScaleX(position.now().z);
         skeleton.updateWorldTransform();
@@ -230,7 +238,7 @@ public class ArkChar {
         shader2.setUniformf("u_outlineColor", 1f, 1f, 0f);
         shader2.setUniformf("u_outlineWidth", outlineWidth.now());
         shader2.setUniformi("u_textureSize", passedTexture.getWidth(), passedTexture.getHeight());
-        shader2.setUniformf("u_alpha", alpha);
+        shader2.setUniformf("u_alpha", alpha.now());
         batch.setShader(shader2);
         ScreenUtils.clear(0, 0, 0, 0, true);
         batch.begin();

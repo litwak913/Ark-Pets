@@ -7,7 +7,6 @@ import cn.harryh.arkpets.animations.AnimData;
 import cn.harryh.arkpets.animations.GeneralBehavior;
 import cn.harryh.arkpets.concurrent.SocketClient;
 import cn.harryh.arkpets.transitions.TernaryFunction;
-import cn.harryh.arkpets.transitions.TransitionFloat;
 import cn.harryh.arkpets.transitions.TransitionVector2;
 import cn.harryh.arkpets.tray.MemberTrayImpl;
 import cn.harryh.arkpets.platform.HWndCtrl;
@@ -34,8 +33,6 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 	public ArkConfig config;
 	public MemberTrayImpl tray;
 	public GeneralBehavior behavior;
-
-	public TransitionFloat windowAlpha; // Window Opacity Easing
 	public TransitionVector2 windowPosition; // Window Position Easing
 
 	private HWndCtrl hWndMine;
@@ -94,8 +91,6 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 		setWindowPos();
 
 		// 5.Window style setup
-		windowAlpha = new TransitionFloat(TernaryFunction.EASE_OUT_CUBIC, (float)durationNormal.toSeconds());
-		windowAlpha.reset(1f);
 		hWndMine = WindowSystem.findWindow(null, APP_TITLE);
 		hWndMine.setLayered(true);
 		if(config.window_style_topmost)
@@ -143,10 +138,6 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 		windowPosition.reset(plane.getX(), - (cha.camera.getHeight() + plane.getY()) + offsetY);
 		windowPosition.addProgress(Gdx.graphics.getDeltaTime());
 		setWindowPos();
-		if (!windowAlpha.isEnded()) {
-			windowAlpha.addProgress(Gdx.graphics.getDeltaTime());
-			cha.alpha = windowAlpha.now();
-		}
 		promiseToolwindowStyle(1);
 
 		// 4.Outline.
@@ -183,8 +174,9 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 		}
 	}
 
-	public void setAlwaysTransparent(boolean alwaysTransparent) {
-		isAlwaysTransparent = alwaysTransparent;
+	public void setTransparentMode(boolean enable) {
+		isAlwaysTransparent = enable;
+		cha.setAlpha(enable ? 0.75f : 1f);
 	}
 
 	private void changeAnimation(AnimData animData) {
