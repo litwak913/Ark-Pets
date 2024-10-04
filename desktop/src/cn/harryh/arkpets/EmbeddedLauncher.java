@@ -57,7 +57,6 @@ public class EmbeddedLauncher {
         Logger.info("System", "Entering the app of EmbeddedLauncher");
         Logger.info("System", "ArkPets version is " + appVersion);
         Logger.debug("System", "Default charset is " + Charset.defaultCharset());
-        ArkConfig appConfig = Objects.requireNonNull(ArkConfig.getConfig(), "ArkConfig returns a null instance, please check the config file.");
         WindowSystem windowSystem;
         try {
             windowSystem = WindowSystem.values()[appConfig.window_system];
@@ -76,6 +75,7 @@ public class EmbeddedLauncher {
             config.setResizable(WindowSystem.needResize());
             config.setWindowedMode(coreWidthDefault, coreHeightDefault);
             config.setWindowPosition(0, 0);
+
             // Configure window title
             final String TITLE = coreTitleManager.getIdleTitle();
             config.setTitle(TITLE);
