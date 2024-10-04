@@ -68,6 +68,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 		behavior = new GeneralBehavior(config, cha.animList);
 		cha.adjustCanvas(behavior.defaultAnim().animClip().stage);
 		cha.setAnimation(behavior.defaultAnim());
+		cha.setAlpha(config.opacity_normal);
 		Logger.info("Animation", "Available animation stages " + behavior.getStages());
 
 		// 3.Plane setup
@@ -176,7 +177,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 
 	public void setTransparentMode(boolean enable) {
 		isAlwaysTransparent = enable;
-		cha.setAlpha(enable ? 0.75f : 1f);
+		cha.setAlpha(enable ? config.opacity_dim : config.opacity_normal);
 	}
 
 	private void changeAnimation(AnimData animData) {

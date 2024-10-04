@@ -17,6 +17,8 @@
     "initial_relative_position":[0.2,0.2],
     "launcher_solid_exit":true,
     "logging_level":"INFO",
+    "opacity_dim":0.75,
+    "opacity_normal":1.0,
     "physic_air_friction_acc":100.0,
     "physic_gravity_acc":800.0,
     "physic_speed_limit_x":1000.0,

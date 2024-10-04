@@ -77,6 +77,10 @@ public class ArkConfig implements Serializable {
     public boolean      launcher_solid_exit;
     /** @since ArkPets 2.0 */ @JSONField(defaultValue = "INFO")
     public String       logging_level;
+    /** @since ArkPets 3.3 */ @JSONField(defaultValue = "0.75")
+    public float        opacity_dim;
+    /** @since ArkPets 3.3 */ @JSONField(defaultValue = "1.0")
+    public float        opacity_normal;
     /** @since ArkPets 2.2 */ @JSONField(defaultValue = "800.0")
     public float        physic_gravity_acc;
     /** @since ArkPets 2.2 */ @JSONField(defaultValue = "100.0")

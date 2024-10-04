@@ -109,6 +109,11 @@ public class GuiComponents {
             return this;
         }
 
+        public final SliderSetup<N> setDisable(boolean disable) {
+            slider.setDisable(disable);
+            return this;
+        }
+
         public final double getSliderValue() {
             return slider.getValue();
         }

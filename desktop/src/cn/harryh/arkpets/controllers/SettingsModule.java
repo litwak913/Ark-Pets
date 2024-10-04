@@ -17,6 +17,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import org.apache.log4j.Level;
@@ -42,6 +43,18 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
     private JFXComboBox<NamedItem<Integer>> configRenderOutline;
     @FXML
     private JFXComboBox<NamedItem<Integer>> configCanvasColor;
+    @FXML
+    private JFXButton toggleConfigRenderOpacity;
+    @FXML
+    private HBox wrapperConfigRenderOpacity;
+    @FXML
+    private JFXSlider configRenderOpacityNormal;
+    @FXML
+    private Label configRenderOpacityNormalValue;
+    @FXML
+    private JFXSlider configRenderOpacityDim;
+    @FXML
+    private Label configRenderOpacityDimValue;
     @FXML
     private JFXCheckBox configWindowTopmost;
     @FXML
@@ -152,11 +165,38 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
                     app.config.canvas_color = String.format("#%08X", newValue.value());
                     app.config.save();
                 });
-        configWindowTopmost.setSelected(app.config.window_style_topmost);
-        configWindowTopmost.setOnAction(e -> {
-            app.config.window_style_topmost = configWindowTopmost.isSelected();
-            app.config.save();
+
+        toggleConfigRenderOpacity.setOnAction(e -> {
+            if (wrapperConfigRenderOpacity.isVisible())
+                GuiPrefabs.fadeOutNode(wrapperConfigRenderOpacity, durationFast, null);
+            else
+                GuiPrefabs.fadeInNode(wrapperConfigRenderOpacity, durationFast, null);
         });
+        final int minOpacity = 10;
+        GuiComponents.SliderSetup<Integer> setupRenderOpacityDim = new GuiComponents.SimpleIntegerSliderSetup(configRenderOpacityDim);
+        setupRenderOpacityDim
+                .setDisplay(configRenderOpacityDimValue, "%d%%", "不透明度 (Opacity)")
+                .setRange(minOpacity, 100)
+                .setTicks(minOpacity, 100 - minOpacity)
+                .setSliderValue(app.config.opacity_dim * 100)
+                .setOnChanged((observable, oldValue, newValue) -> {
+                    app.config.opacity_dim = setupRenderOpacityDim.getValidatedValue() / 100f;
+                    app.config.save();
+                });
+        GuiComponents.SliderSetup<Integer> setupRenderOpacityNormal = new GuiComponents.SimpleIntegerSliderSetup(configRenderOpacityNormal);
+        setupRenderOpacityNormal
+                .setDisplay(configRenderOpacityNormalValue, "%d%%", "不透明度 (Opacity)")
+                .setRange(minOpacity, 100)
+                .setTicks(minOpacity, 100 - minOpacity)
+                .setSliderValue(app.config.opacity_normal * 100)
+                .setOnChanged((observable, oldValue, newValue) -> {
+                    setupRenderOpacityDim.setRange(minOpacity, setupRenderOpacityNormal.getValidatedValue());
+                    setupRenderOpacityDim.setDisable(minOpacity >= setupRenderOpacityNormal.getValidatedValue());
+                    app.config.opacity_normal = setupRenderOpacityNormal.getValidatedValue() / 100f;
+                    app.config.save();
+                });
+        setupRenderOpacityDim.setRange(minOpacity, setupRenderOpacityNormal.getValidatedValue());
+        setupRenderOpacityDim.setDisable(minOpacity >= setupRenderOpacityNormal.getValidatedValue());
     }
 
     private void initConfigAdvanced() {
@@ -254,6 +294,12 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
         configSolidExit.setSelected(app.config.launcher_solid_exit);
         configSolidExit.setOnAction(e -> {
             app.config.launcher_solid_exit = configSolidExit.isSelected();
+            app.config.save();
+        });
+
+        configWindowTopmost.setSelected(app.config.window_style_topmost);
+        configWindowTopmost.setOnAction(e -> {
+            app.config.window_style_topmost = configWindowTopmost.isSelected();
             app.config.save();
         });
 

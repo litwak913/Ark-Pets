@@ -9,6 +9,8 @@
 <?import com.jfoenix.controls.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
 <Pane prefHeight="376.0" prefWidth="460.0" styleClass="wrapper" stylesheets="@Main.css"
       xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="cn.harryh.arkpets.controllers.SettingsModule">
@@ -31,6 +33,8 @@
                     <JFXComboBox fx:id="configCanvasSize" prefWidth="120.0"/>
                     <JFXButton fx:id="configCanvasSizeHelp"/>
                 </HBox>
+                <Separator/>
+                <Label styleClass="config-group-title" text="渲染设置"/>
                 <HBox>
                     <Label text="高亮描边"/>
                     <JFXComboBox fx:id="configRenderOutline" prefWidth="120.0"/>
@@ -38,6 +42,37 @@
                 <HBox>
                     <Label text="背景颜色"/>
                     <JFXComboBox fx:id="configCanvasColor" prefWidth="120.0"/>
+                </HBox>
+                <HBox>
+                    <Label text="不透明度"/>
+                    <JFXButton fx:id="toggleConfigRenderOpacity" minHeight="-Infinity" minWidth="-Infinity"
+                               mnemonicParsing="false" prefHeight="28.0" prefWidth="60.0" text="配置">
+                        <graphic>
+                            <AnchorPane prefHeight="25.0" prefWidth="16.0" scaleX="0.0" styleClass="btn-icon">
+                                <SVGPath
+                                        content="m15 5h5v5h4v8h-4v5h-20v-22h15v4zm-5 12h-8v4h8v-4zm8 0h-7v4h7v-4zm-11-5h-5v4h5v-4zm9 0h-8v4h8v-4zm6 0h-5v4h5v-4zm-11-5v4h7v-4h-7zm-1 0h-8v4h8v-4zm-3-4h-5v3h5v-3zm6 0h-5v3h5v-3z"
+                                        scaleX="1.1" scaleY="1.1" AnchorPane.leftAnchor="-9.0"/>
+                            </AnchorPane>
+                        </graphic>
+                        <styleClass>
+                            <String fx:value="btn-secondary"/>
+                            <String fx:value="btn-with-icon"/>
+                        </styleClass>
+                    </JFXButton>
+                </HBox>
+                <HBox fx:id="wrapperConfigRenderOpacity" managed="false" visible="false">
+                    <VBox>
+                        <HBox>
+                            <Label text="正常模式下"/>
+                            <JFXSlider fx:id="configRenderOpacityNormal"/>
+                            <Label fx:id="configRenderOpacityNormalValue" text="0"/>
+                        </HBox>
+                        <HBox>
+                            <Label text="透明模式下"/>
+                            <JFXSlider fx:id="configRenderOpacityDim"/>
+                            <Label fx:id="configRenderOpacityDimValue" text="0"/>
+                        </HBox>
+                    </VBox>
                 </HBox>
                 <Separator/>
                 <Label styleClass="config-group-title" text="高级设置"/>
