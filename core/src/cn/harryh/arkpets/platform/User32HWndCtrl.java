@@ -90,7 +90,7 @@ public class User32HWndCtrl extends HWndCtrl {
 
     @Override
     public void setWindowPosition(HWndCtrl insertAfter, int x, int y, int w, int h) {
-        User32.INSTANCE.SetWindowPos(hWnd, ((User32HWndCtrl)insertAfter).hWnd, x, y, w, h, WinUser.SWP_NOACTIVATE);
+        User32.INSTANCE.SetWindowPos(hWnd, insertAfter != null ? ((User32HWndCtrl) insertAfter).hWnd : null, x, y, w, h, WinUser.SWP_NOACTIVATE);
     }
 
     @Override
