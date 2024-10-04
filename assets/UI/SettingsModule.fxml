@@ -37,7 +37,7 @@
                 </HBox>
                 <HBox>
                     <Label text="背景颜色"/>
-                    <JFXComboBox fx:id="configBackgroundColor" prefWidth="120.0"/>
+                    <JFXComboBox fx:id="configCanvasColor" prefWidth="120.0"/>
                 </HBox>
                 <Separator/>
                 <Label styleClass="config-group-title" text="高级设置"/>

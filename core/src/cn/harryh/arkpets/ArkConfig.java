@@ -39,8 +39,6 @@ public class ArkConfig implements Serializable {
 
 
     // Config items and default values:
-    /** @since ArkPets 3.3 */ @JSONField(defaultValue = "#00000000")
-    public String       background_color;
     /** @since ArkPets 1.0 */ @JSONField(defaultValue = "8")
     public int          behavior_ai_activation;
     /** @since ArkPets 1.0 */ @JSONField(defaultValue = "true")
@@ -51,6 +49,8 @@ public class ArkConfig implements Serializable {
     public boolean      behavior_allow_walk;
     /** @since ArkPets 1.6 */ @JSONField(defaultValue = "true")
     public boolean      behavior_do_peer_repulsion;
+    /** @since ArkPets 3.3 */ @JSONField(defaultValue = "#00000000")
+    public String       canvas_color;
     /** @since ArkPets 3.1 */ @JSONField(defaultValue = "16")
     public int          canvas_fitting_samples;
     /** @since ArkPets 2.0 */ @JSONField()
@@ -114,18 +114,19 @@ public class ArkConfig implements Serializable {
         return isNewcomer;
     }
 
-    /** Returns converted background color.
+    /** Returns the background color of the canvas.
+     * @see com.badlogic.gdx.graphics.Color
      */
     @JSONField(serialize = false)
-    public Color getBackgroundColor() {
-        Color backgroundColor;
-        if (background_color.matches("^#[0-9a-fA-F]{8}$")) {
-            backgroundColor = Color.valueOf(background_color);
+    public Color getCanvasColor() {
+        Color color;
+        if (hexColorRegex.matcher(canvas_color).matches()) {
+            color = Color.valueOf(canvas_color);
         } else {
-            Logger.warn("System", "Invalid background color,using transparent");
-            backgroundColor = Color.CLEAR;
+            Logger.warn("Config", "Invalid color config, using transparent");
+            color = Color.CLEAR;
         }
-        return backgroundColor;
+        return color;
     }
 
     /** Gets the custom ArkConfig object by reading the external config file.

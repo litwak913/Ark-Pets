@@ -37,8 +37,9 @@ public class PortUtils {
                 if (socketData.operation == SocketData.Operation.HANDSHAKE_RESPONSE)
                     return serverPort;
             } catch (JSONException ignored) {
-                Logger.error("SocketServer", String.format("Port %d is already occupied and is not occupied by ArkPets", serverPort));
+                Logger.warn("SocketServer", "Port " + serverPort + " responded with an invalid content");
             } catch (IOException ignored) {
+                Logger.warn("SocketServer", "Port " + serverPort + " is inaccessible");
             }
         }
         throw new NoServerRunningException();
@@ -67,6 +68,8 @@ public class PortUtils {
     }
 
 
+    /** This exception indicates that there is no port in idle.
+     */
     public static class NoPortAvailableException extends IllegalStateException {
         public NoPortAvailableException() {
             super("No port is available.");
@@ -74,6 +77,8 @@ public class PortUtils {
     }
 
 
+    /** This exception indicates that a server is already running.
+     */
     public static class ServerCollisionException extends IllegalStateException {
         public ServerCollisionException() {
             super("A server is already running.");
@@ -81,6 +86,8 @@ public class PortUtils {
     }
 
 
+    /** This exception indicates that no running server is found.
+     */
     public static class NoServerRunningException extends IllegalStateException {
         public NoServerRunningException() {
             super("No running server is found.");

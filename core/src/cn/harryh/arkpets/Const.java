@@ -13,6 +13,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 
 /** Constants definition class.
@@ -78,8 +79,10 @@ public final class Const {
     public static final int reconnectDelayMillis    = 5 * 1000;
 
     // Misc constants
-    public static String ipPortRegex = "^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?):\\d{1,5}$";
-
+    public static final Pattern ipPortRegex     = Pattern.compile(
+            "^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?):\\d{1,5}$");
+    public static final Pattern hexColorRegex   = Pattern.compile(
+            "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$");
 
     /** Paths presets definition class.
      */

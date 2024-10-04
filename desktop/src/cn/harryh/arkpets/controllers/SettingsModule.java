@@ -41,7 +41,7 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
     @FXML
     private JFXComboBox<NamedItem<Integer>> configRenderOutline;
     @FXML
-    private JFXComboBox<NamedItem<Integer>> configBackgroundColor;
+    private JFXComboBox<NamedItem<Integer>> configCanvasColor;
     @FXML
     private JFXCheckBox configWindowTopmost;
     @FXML
@@ -143,13 +143,13 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
                     app.config.display_render_outline = newValue.value();
                     app.config.save();
                 });
-        new ComboBoxSetup<>(configBackgroundColor).setItems(new NamedItem<>("透明", 0x00000000),
-                        new NamedItem<>("绿色", 0x00ff00ff),
-                        new NamedItem<>("蓝色", 0x0000ffff),
-                        new NamedItem<>("品红色", 0xff00ffff))
-                .selectValue(Color.rgba8888(app.config.getBackgroundColor()), app.config.background_color + "（自定义）")
+        new ComboBoxSetup<>(configCanvasColor).setItems(new NamedItem<>("透明", 0x00000000),
+                        new NamedItem<>("绿色", 0x00FF00FF),
+                        new NamedItem<>("蓝色", 0x0000FFFF),
+                        new NamedItem<>("品红色", 0xFF00FFFF))
+                .selectValue(Color.rgba8888(app.config.getCanvasColor()), app.config.canvas_color + "（自定义）")
                 .setOnNonNullValueUpdated((observable, oldValue, newValue) -> {
-                    app.config.background_color = String.format("#%08X", newValue.value());
+                    app.config.canvas_color = String.format("#%08X", newValue.value());
                     app.config.save();
                 });
         configWindowTopmost.setSelected(app.config.window_style_topmost);
@@ -201,7 +201,7 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
                 System.setProperty("https.proxyHost", "");
                 System.setProperty("https.proxyPort", "");
             } else {
-                if (newValue.matches(ipPortRegex)) {
+                if (ipPortRegex.matcher(newValue).matches()) {
                     String[] ipPort = newValue.split(":");
                     System.setProperty("http.proxyHost", ipPort[0]);
                     System.setProperty("http.proxyPort", ipPort[1]);

@@ -1,10 +1,10 @@
 {
-    "background_color":"#00000000",
     "behavior_ai_activation":8,
     "behavior_allow_interact":true,
     "behavior_allow_sit":true,
     "behavior_allow_walk":true,
     "behavior_do_peer_repulsion":true,
+    "canvas_color":"#00000000",
     "canvas_fitting_samples":16,
     "character_asset":"",
     "character_files":{},

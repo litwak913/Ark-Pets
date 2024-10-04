@@ -62,8 +62,8 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 		config = Objects.requireNonNull(ArkConfig.getConfig(), "ArkConfig returns a null instance, please check the config file.");
 		Gdx.input.setInputProcessor(this);
 		Gdx.graphics.setForegroundFPS(config.display_fps);
-		Logger.info("System", "OpenGL Version " + Gdx.gl.glGetString(GL20.GL_VERSION));
-		Logger.info("System", "OpenGL Vendor " + Gdx.gl.glGetString(GL20.GL_VENDOR));
+		Logger.debug("App", "OpenGL version is " + Gdx.gl.glGetString(GL20.GL_VERSION));
+		Logger.debug("App", "OpenGL vendor is " + Gdx.gl.glGetString(GL20.GL_VENDOR));
 
 		// 2.Character setup
 		Logger.info("App", "Using model asset \"" + config.character_asset + "\"");

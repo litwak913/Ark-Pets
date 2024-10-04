@@ -64,7 +64,6 @@ public class ArkChar {
         camera.setMinInsert(canvasReserveLength - canvasMaxSize);
         batch = new TwoColorPolygonBatch();
         renderer = new SkeletonRenderer();
-        Color backgroundColor = config.getBackgroundColor();
         /* Pre-multiplied alpha shouldn't be applied to models released in Arknights 2.1.41 or later,
         otherwise you may get a corrupted rendering result. */
         renderer.setPremultipliedAlpha(false);
@@ -123,7 +122,7 @@ public class ArkChar {
             }
         };
         // 6.Canvas setup
-        setCanvas(backgroundColor);
+        setCanvas(config.getCanvasColor());
         stageInsertMap = new HashMap<>();
         for (AnimStage stage : animList.clusterByStage().keySet()) {
             // Figure out the suitable canvas size
