@@ -43,6 +43,7 @@ public class GuiComponents {
 
         public SliderSetup(Slider slider) {
             this.slider = slider;
+            this.slider.setValue(Double.NaN);
             // Initialize the property proxy.
             this.proxy = new DoublePropertyBase(initialValue) {
                 @Override

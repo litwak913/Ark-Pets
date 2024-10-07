@@ -166,17 +166,17 @@ public class ArkChar {
      * @param width The outline width in pixel.
      */
     public void setOutlineWidth(float width) {
-        outlineWidth.reset(width);
+        outlineWidth.reset(Math.max(0f, width));
     }
 
-    /** Requests to set the alpha value of the renderer.
-     * @param newAlpha The new alpha value.
+    /** Requests to set the alpha value of the ultimate rendering process.
+     * @param newAlpha The new alpha value ranging in [0,1].
      */
     public void setAlpha(float newAlpha) {
-        alpha.reset(newAlpha);
+        alpha.reset(Math.max(0f, Math.min(1f, newAlpha)));
     }
 
-    /** Get the animation playing.
+    /** Gets the animation playing.
      * @return The animation data.
      */
     public AnimData getPlaying() {
