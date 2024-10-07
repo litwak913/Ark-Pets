@@ -1,5 +1,24 @@
 # 更新日志 / CHANGELOG
 
+## v3.3
+| **新增**                                    |                                            |
+|:------------------------------------------|:-------------------------------------------|
+| [`b34592f`]<br>[`91919e5`]<br>[`b8fbef1`] | 新增了可以渲染桌宠**高亮描边**的功能，并可以自定义开启条件、描边颜色和描边宽度。 |
+| [`#78`]<br>[`44401ff`]                    | 新增了可以渲染桌宠**背景颜色**的功能，以满足绿幕等特殊需求。           |
+| [`#71`]<br>[`cdb6a6f`]                    | 新增了可以自定义角色在正常模式和透明模式下的**不透明度**的功能。         |
+
+| **修复**                 |                                      |
+|:-----------------------|:-------------------------------------|
+| [`#75`]<br>[`fb4fd87`] | 修复了不支持 JSON 格式的骨骼文件的问题。              |
+| [`14ceaa6`]            | 修复了启动器在提示框弹出时无法与标题栏交互的问题。            |
+| [`#76`]<br>[`62f0012`] | 缓解了角色的 Spine 组件拼合部位的透明缝合线现象。         |
+| [`#79`]<br>[`50467bf`] | 修复了在特定情况下由于第三方程序干扰端口握手而导致的桌宠异常退出的问题。 |
+
+| **优化**                 |                                     |
+|:-----------------------|:------------------------------------|
+| [`3399c76`]            | 优化了渲染时图像缩放的处理方法，现在采用骨骼缩放，而不是视窗缩放。   |
+| [`#78`]<br>[`444e720`] | 优化了渲染时不透明度的处理方法，现在由着色器实现，而不是窗口系统实现。 |
+
 ## v3.2
 | **新增**                            |                          |
 |:----------------------------------|:-------------------------|
@@ -369,6 +388,11 @@
 [`#63`]: https://github.com/isHarryh/Ark-Pets/issues/63
 [`#68`]: https://github.com/isHarryh/Ark-Pets/issues/68
 [`#70`]: https://github.com/isHarryh/Ark-Pets/issues/70
+[`#71`]: https://github.com/isHarryh/Ark-Pets/issues/71
+[`#75`]: https://github.com/isHarryh/Ark-Pets/pull/75
+[`#76`]: https://github.com/isHarryh/Ark-Pets/issues/76
+[`#78`]: https://github.com/isHarryh/Ark-Pets/pull/78
+[`#79`]: https://github.com/isHarryh/Ark-Pets/pull/79
 [`3253706`]: https://github.com/isHarryh/Ark-Pets/commit/3253706fde859a316b3e08362dd57adb98c1df8c
 [`7b2e856`]: https://github.com/isHarryh/Ark-Pets/commit/7b2e8562579ebabbb102b40122cf3130463f03bc
 [`ff82a1e`]: https://github.com/isHarryh/Ark-Pets/commit/ff82a1e21ce396c345038b4cb340f10eeca89cf2
@@ -401,3 +425,14 @@
 [`fcb5111`]: https://github.com/isHarryh/Ark-Pets/commit/fcb51118f68c7765c4ae6171024a8968dc290933
 [`1af28e6`]: https://github.com/isHarryh/Ark-Pets/commit/1af28e6a637e33c4da5e9eac0d2677abe2d53ccc
 [`c7591f2`]: https://github.com/isHarryh/Ark-Pets/commit/c7591f249a6966fafe0111a4414a4a2daede6ad2
+[`fb4fd87`]: https://github.com/isHarryh/Ark-Pets/commit/fb4fd8716ddde18ae22ac4d92ef9c2cf17b880d8
+[`14ceaa6`]: https://github.com/isHarryh/Ark-Pets/commit/14ceaa6c118604f9a879042cad4746c5c0fa5d4d
+[`b34592f`]: https://github.com/isHarryh/Ark-Pets/commit/b34592f12889ad30c53c617467e248882ca32a54
+[`91919e5`]: https://github.com/isHarryh/Ark-Pets/commit/91919e5b74e466138a6304d854e0cac925ed6858
+[`62f0012`]: https://github.com/isHarryh/Ark-Pets/commit/62f0012c10d8ff72fc6fc7fdbb40fccca1bbfc24
+[`3399c76`]: https://github.com/isHarryh/Ark-Pets/commit/3399c765156574b108f344810e109ca0f36810a8
+[`44401ff`]: https://github.com/isHarryh/Ark-Pets/commit/44401ff96fe34f3bf729afc441e7a526383e183c
+[`444e720`]: https://github.com/isHarryh/Ark-Pets/commit/444e7208da094cbfabc5413f206e366b730996e8
+[`50467bf`]: https://github.com/isHarryh/Ark-Pets/commit/50467bfa2cc662806df962600465aa6a55c425d2
+[`cdb6a6f`]: https://github.com/isHarryh/Ark-Pets/commit/cdb6a6f5b86807ed6b68a22bcbc30972b7483fdb
+[`b8fbef1`]: https://github.com/isHarryh/Ark-Pets/commit/b8fbef19f898db40039d0735b8a27e95bc8cb161
