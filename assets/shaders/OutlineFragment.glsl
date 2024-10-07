@@ -8,7 +8,7 @@
 
 varying vec2 v_texCoords;       // From VS
 uniform sampler2D u_texture;    // From TCPB
-uniform vec3 u_outlineColor;    // Required
+uniform vec4 u_outlineColor;    // Required
 uniform float u_outlineWidth;   // Required
 uniform ivec2 u_textureSize;    // Required
 uniform float u_alpha;          // Required
@@ -46,7 +46,7 @@ void main() {
             }
             if (neighborAlpha > c_alphaLv0) {
                 gl_FragColor.rgb = u_outlineColor.rgb;
-                gl_FragColor.a = min(1.0, neighborAlpha);
+                gl_FragColor.a = min(1.0, neighborAlpha) * u_outlineColor.a;
             } else {
                 gl_FragColor = texColor;
             }

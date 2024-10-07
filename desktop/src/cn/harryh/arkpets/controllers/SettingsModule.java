@@ -33,16 +33,26 @@ import static cn.harryh.arkpets.Const.*;
 public final class SettingsModule implements Controller<ArkHomeFX> {
     @FXML
     private Pane noticeBox;
+
     @FXML
     private JFXComboBox<NamedItem<Float>> configDisplayScale;
     @FXML
     private JFXComboBox<NamedItem<Integer>> configDisplayFps;
     @FXML
     private JFXComboBox<NamedItem<Integer>> configCanvasSize;
+
+    @FXML
+    private JFXComboBox<NamedItem<Integer>> configCanvasColor;
+    @FXML
+    private JFXButton toggleConfigRenderOutline;
+    @FXML
+    private HBox wrapperConfigRenderOutline;
     @FXML
     private JFXComboBox<NamedItem<Integer>> configRenderOutline;
     @FXML
-    private JFXComboBox<NamedItem<Integer>> configCanvasColor;
+    private JFXComboBox<NamedItem<Integer>> configRenderOutlineColor;
+    @FXML
+    private JFXComboBox<NamedItem<Float>> configRenderOutlineWidth;
     @FXML
     private JFXButton toggleConfigRenderOpacity;
     @FXML
@@ -55,6 +65,7 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
     private JFXSlider configRenderOpacityDim;
     @FXML
     private Label configRenderOpacityDimValue;
+
     @FXML
     private JFXCheckBox configWindowTopmost;
     @FXML
@@ -75,6 +86,7 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
     private JFXCheckBox configWindowToolwindow;
     @FXML
     private JFXButton configWindowToolwindowHelp;
+
     @FXML
     private Label aboutQueryUpdate;
     @FXML
@@ -146,16 +158,7 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
                 };
             }
         };
-        new ComboBoxSetup<>(configRenderOutline).setItems(new NamedItem<>("始终开启", ArkConfig.RenderOutline.ALWAYS.ordinal()),
-                new NamedItem<>("处于前台时", ArkConfig.RenderOutline.FOCUSED.ordinal()),
-                new NamedItem<>("点击时", ArkConfig.RenderOutline.PRESSING.ordinal()),
-                new NamedItem<>("拖拽时", ArkConfig.RenderOutline.DRAGGING.ordinal()),
-                new NamedItem<>("关闭", ArkConfig.RenderOutline.NEVER.ordinal()))
-                .selectValue(app.config.render_outline, "未知")
-                .setOnNonNullValueUpdated((observable, oldValue, newValue) -> {
-                    app.config.render_outline = newValue.value();
-                    app.config.save();
-                });
+
         new ComboBoxSetup<>(configCanvasColor).setItems(new NamedItem<>("透明", 0x00000000),
                         new NamedItem<>("绿色", 0x00FF00FF),
                         new NamedItem<>("蓝色", 0x0000FFFF),
@@ -163,6 +166,41 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
                 .selectValue(Color.rgba8888(ArkConfig.getGdxColorFrom(app.config.canvas_color)), app.config.canvas_color + "（自定义）")
                 .setOnNonNullValueUpdated((observable, oldValue, newValue) -> {
                     app.config.canvas_color = String.format("#%08X", newValue.value());
+                    app.config.save();
+                });
+
+        toggleConfigRenderOutline.setOnAction(e -> {
+            if (wrapperConfigRenderOutline.isVisible())
+                GuiPrefabs.fadeOutNode(wrapperConfigRenderOutline, durationFast, null);
+            else
+                GuiPrefabs.fadeInNode(wrapperConfigRenderOutline, durationFast, null);
+        });
+        new ComboBoxSetup<>(configRenderOutline).setItems(new NamedItem<>("始终开启", ArkConfig.RenderOutline.ALWAYS.ordinal()),
+                        new NamedItem<>("处于前台时", ArkConfig.RenderOutline.FOCUSED.ordinal()),
+                        new NamedItem<>("点击时", ArkConfig.RenderOutline.PRESSING.ordinal()),
+                        new NamedItem<>("拖拽时", ArkConfig.RenderOutline.DRAGGING.ordinal()),
+                        new NamedItem<>("关闭", ArkConfig.RenderOutline.NEVER.ordinal()))
+                .selectValue(app.config.render_outline, "未知")
+                .setOnNonNullValueUpdated((observable, oldValue, newValue) -> {
+                    app.config.render_outline = newValue.value();
+                    app.config.save();
+                });
+        new ComboBoxSetup<>(configRenderOutlineColor).setItems(new NamedItem<>("黄色", 0xFFFF00FF),
+                        new NamedItem<>("白色", 0xFFFFFFFF),
+                        new NamedItem<>("青色", 0x00FFFFFF))
+                .selectValue(Color.rgba8888(ArkConfig.getGdxColorFrom(app.config.render_outline_color)), app.config.render_outline_color + "（自定义）")
+                .setOnNonNullValueUpdated((observable, oldValue, newValue) -> {
+                    app.config.render_outline_color = String.format("#%08X", newValue.value());
+                    app.config.save();
+                });
+        new ComboBoxSetup<>(configRenderOutlineWidth).setItems(new NamedItem<>("极细", 1f),
+                        new NamedItem<>("较细", 1.5f),
+                        new NamedItem<>("标准", 2f),
+                        new NamedItem<>("较粗", 3f),
+                        new NamedItem<>("极粗", 5f))
+                .selectValue(app.config.render_outline_width, app.config.render_outline_width + "个单位（自定义）")
+                .setOnNonNullValueUpdated((observable, oldValue, newValue) -> {
+                    app.config.render_outline_width = newValue.value();
                     app.config.save();
                 });
 

@@ -147,7 +147,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 				mouseStatus.mouseDown && renderOutline == ArkConfig.RenderOutline.PRESSING ||
 				isFocused && renderOutline == ArkConfig.RenderOutline.FOCUSED ||
 				mouseStatus.dragging && renderOutline == ArkConfig.RenderOutline.DRAGGING
-				? outlineWidthMax : 0f);
+				? config.render_outline_width : 0f);
 	}
 
 	@Override
