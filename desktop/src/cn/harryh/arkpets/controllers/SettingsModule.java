@@ -151,16 +151,16 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
                 new NamedItem<>("点击时", ArkConfig.RenderOutline.PRESSING.ordinal()),
                 new NamedItem<>("拖拽时", ArkConfig.RenderOutline.DRAGGING.ordinal()),
                 new NamedItem<>("关闭", ArkConfig.RenderOutline.NEVER.ordinal()))
-                .selectValue(app.config.display_render_outline, "未知")
+                .selectValue(app.config.render_outline, "未知")
                 .setOnNonNullValueUpdated((observable, oldValue, newValue) -> {
-                    app.config.display_render_outline = newValue.value();
+                    app.config.render_outline = newValue.value();
                     app.config.save();
                 });
         new ComboBoxSetup<>(configCanvasColor).setItems(new NamedItem<>("透明", 0x00000000),
                         new NamedItem<>("绿色", 0x00FF00FF),
                         new NamedItem<>("蓝色", 0x0000FFFF),
                         new NamedItem<>("品红色", 0xFF00FFFF))
-                .selectValue(Color.rgba8888(app.config.getCanvasColor()), app.config.canvas_color + "（自定义）")
+                .selectValue(Color.rgba8888(ArkConfig.getGdxColorFrom(app.config.canvas_color)), app.config.canvas_color + "（自定义）")
                 .setOnNonNullValueUpdated((observable, oldValue, newValue) -> {
                     app.config.canvas_color = String.format("#%08X", newValue.value());
                     app.config.save();

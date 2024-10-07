@@ -122,7 +122,7 @@ public class ArkChar {
             }
         };
         // 6.Canvas setup
-        setCanvas(config.getCanvasColor());
+        setCanvas(ArkConfig.getGdxColorFrom(config.canvas_color));
         stageInsertMap = new HashMap<>();
         for (AnimStage stage : animList.clusterByStage().keySet()) {
             // Figure out the suitable canvas size

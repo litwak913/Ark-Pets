@@ -200,13 +200,15 @@ public final class BehaviorModule implements Controller<ArkHomeFX> {
                     app.config.save();
                 });
         EventHandler<MouseEvent> configPhysicRestoreEvent = e -> {
-            ArkConfig defaults = ArkConfig.defaultConfig;
-            setupPhysicGravity.setSliderValue(defaults.physic_gravity_acc);
-            setupPhysicAirFriction.setSliderValue(defaults.physic_air_friction_acc);
-            setupPhysicStaticFriction.setSliderValue(defaults.physic_static_friction_acc);
-            setupPhysicSpeedLimitX.setSliderValue(defaults.physic_speed_limit_x);
-            setupPhysicSpeedLimitY.setSliderValue(defaults.physic_speed_limit_y);
-            Logger.info("Config", "Physic params restored");
+            ArkConfig defaults = ArkConfig.getDefaultConfig();
+            if (defaults != null) {
+                setupPhysicGravity.setSliderValue(defaults.physic_gravity_acc);
+                setupPhysicAirFriction.setSliderValue(defaults.physic_air_friction_acc);
+                setupPhysicStaticFriction.setSliderValue(defaults.physic_static_friction_acc);
+                setupPhysicSpeedLimitX.setSliderValue(defaults.physic_speed_limit_x);
+                setupPhysicSpeedLimitY.setSliderValue(defaults.physic_speed_limit_y);
+                Logger.info("Config", "Physic params restored");
+            }
         };
         configPhysicRestore.setOnMouseClicked(e -> {
             configPhysicRestoreEvent.handle(e);

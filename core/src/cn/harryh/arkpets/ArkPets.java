@@ -142,7 +142,7 @@ public class ArkPets extends ApplicationAdapter implements InputProcessor {
 		promiseToolwindowStyle(1);
 
 		// 4.Outline.
-		ArkConfig.RenderOutline renderOutline = ArkConfig.RenderOutline.from(config.display_render_outline);
+		ArkConfig.RenderOutline renderOutline = ArkConfig.getRenderOutlineFrom(config.render_outline);
 		cha.setOutlineWidth(renderOutline == ArkConfig.RenderOutline.ALWAYS ||
 				mouseStatus.mouseDown && renderOutline == ArkConfig.RenderOutline.PRESSING ||
 				isFocused && renderOutline == ArkConfig.RenderOutline.FOCUSED ||

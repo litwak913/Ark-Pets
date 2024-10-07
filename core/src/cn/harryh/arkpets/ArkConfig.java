@@ -22,21 +22,9 @@ import static cn.harryh.arkpets.Const.*;
 
 
 public class ArkConfig implements Serializable {
-    public static final ArkConfig defaultConfig;
     private static final URL configDefault = Objects.requireNonNull(ArkConfig.class.getResource(Const.configInternal));
     private static final File configCustom = new File(Const.configExternal);
     private static boolean isNewcomer = false;
-
-    static {
-        ArkConfig defaultConfig_ = null;
-        try {
-            defaultConfig_ = JSONObject.parseObject(Objects.requireNonNull(configDefault).openStream(), ArkConfig.class);
-        } catch (IOException | NullPointerException e) {
-            Logger.error("Config", "Default config parsing failed, details see below.", e);
-        }
-        defaultConfig = defaultConfig_;
-    }
-
 
     // Config items and default values:
     /** @since ArkPets 1.0 */ @JSONField(defaultValue = "8")
@@ -66,7 +54,7 @@ public class ArkConfig implements Serializable {
     /** @since ArkPets 2.1 */ @JSONField(defaultValue = "true")
     public boolean      display_multi_monitors;
     /** @since ArkPets 3.3 */ @JSONField(defaultValue = "1")
-    public int          display_render_outline;
+    public int          render_outline;
     /** @since ArkPets 1.0 */ @JSONField(defaultValue = "1.0")
     public float        display_scale;
     /** @since ArkPets 3.2 */ @JSONField(defaultValue = "0.2")
@@ -118,21 +106,6 @@ public class ArkConfig implements Serializable {
         return isNewcomer;
     }
 
-    /** Returns the background color of the canvas.
-     * @see com.badlogic.gdx.graphics.Color
-     */
-    @JSONField(serialize = false)
-    public Color getCanvasColor() {
-        Color color;
-        if (hexColorRegex.matcher(canvas_color).matches()) {
-            color = Color.valueOf(canvas_color);
-        } else {
-            Logger.warn("Config", "Invalid color config, using transparent");
-            color = Color.CLEAR;
-        }
-        return color;
-    }
-
     /** Gets the custom ArkConfig object by reading the external config file.
      * If the external config file does not exist, a default config file will be generated.
      * @return An ArkConfig object. {@code null} if failed.
@@ -174,6 +147,28 @@ public class ArkConfig implements Serializable {
         return null;
     }
 
+    /** @see com.badlogic.gdx.graphics.Color
+     */
+    public static Color getGdxColorFrom(String string) {
+        Color color;
+        if (hexColorRegex.matcher(string).matches()) {
+            color = Color.valueOf(string);
+        } else {
+            Logger.warn("Config", "Invalid color config, using transparent");
+            color = Color.CLEAR;
+        }
+        return color;
+    }
+
+    /** @see RenderOutline
+     */
+    public static RenderOutline getRenderOutlineFrom(int ordinal) {
+        if (ordinal >= RenderOutline.values().length)
+            ordinal = 0;
+        return RenderOutline.values()[ordinal];
+    }
+
+
     /** Config options for render outline.
      */
     public enum RenderOutline {
@@ -182,14 +177,9 @@ public class ArkConfig implements Serializable {
         PRESSING,
         FOCUSED,
         _RESERVED,
-        ALWAYS;
-
-        public static RenderOutline from(int ordinal) {
-            if (ordinal >= RenderOutline.values().length)
-                ordinal = 0;
-            return RenderOutline.values()[ordinal];
-        }
+        ALWAYS
     }
+
 
     /** Only available in Windows OS.
      */

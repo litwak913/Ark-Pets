@@ -12,7 +12,6 @@
     "display_fps":30,
     "display_margin_bottom":0,
     "display_multi_monitors":true,
-    "display_render_outline":1,
     "display_scale":1.0,
     "initial_relative_position":[0.2,0.2],
     "launcher_solid_exit":true,
@@ -24,6 +23,7 @@
     "physic_speed_limit_x":1000.0,
     "physic_speed_limit_y":1000.0,
     "physic_static_friction_acc":500.0,
+    "render_outline":1,
     "window_style_toolwindow":true,
     "window_style_topmost":true
 }
