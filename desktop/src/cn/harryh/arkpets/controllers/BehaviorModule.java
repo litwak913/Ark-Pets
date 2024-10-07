@@ -132,12 +132,7 @@ public final class BehaviorModule implements Controller<ArkHomeFX> {
                     app.config.save();
                 });
 
-        toggleConfigDeployPosition.setOnAction(e -> {
-            if (wrapperConfigDeployPosition.isVisible())
-                GuiPrefabs.fadeOutNode(wrapperConfigDeployPosition, durationFast, null);
-            else
-                GuiPrefabs.fadeInNode(wrapperConfigDeployPosition, durationFast, null);
-        });
+        GuiPrefabs.bindToggleAndWrapper(toggleConfigDeployPosition, wrapperConfigDeployPosition, durationFast);
         GuiComponents.DotPickerSetup setupDeployPosition = new GuiComponents.DotPickerSetup(configDeployPosition);
         setupDeployPosition.setRelXY(app.config.initial_position_x, app.config.initial_position_y);
         setupDeployPosition.setOnDotPicked(e -> {

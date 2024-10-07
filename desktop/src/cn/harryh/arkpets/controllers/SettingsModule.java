@@ -169,12 +169,7 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
                     app.config.save();
                 });
 
-        toggleConfigRenderOutline.setOnAction(e -> {
-            if (wrapperConfigRenderOutline.isVisible())
-                GuiPrefabs.fadeOutNode(wrapperConfigRenderOutline, durationFast, null);
-            else
-                GuiPrefabs.fadeInNode(wrapperConfigRenderOutline, durationFast, null);
-        });
+        GuiPrefabs.bindToggleAndWrapper(toggleConfigRenderOutline, wrapperConfigRenderOutline, durationFast);
         new ComboBoxSetup<>(configRenderOutline).setItems(new NamedItem<>("始终开启", ArkConfig.RenderOutline.ALWAYS.ordinal()),
                         new NamedItem<>("处于前台时", ArkConfig.RenderOutline.FOCUSED.ordinal()),
                         new NamedItem<>("点击时", ArkConfig.RenderOutline.PRESSING.ordinal()),
@@ -204,12 +199,7 @@ public final class SettingsModule implements Controller<ArkHomeFX> {
                     app.config.save();
                 });
 
-        toggleConfigRenderOpacity.setOnAction(e -> {
-            if (wrapperConfigRenderOpacity.isVisible())
-                GuiPrefabs.fadeOutNode(wrapperConfigRenderOpacity, durationFast, null);
-            else
-                GuiPrefabs.fadeInNode(wrapperConfigRenderOpacity, durationFast, null);
-        });
+        GuiPrefabs.bindToggleAndWrapper(toggleConfigRenderOpacity, wrapperConfigRenderOpacity, durationFast);
         final int minOpacity = 10;
         GuiComponents.SliderSetup<Integer> setupRenderOpacityDim = new GuiComponents.SimpleIntegerSliderSetup(configRenderOpacityDim);
         setupRenderOpacityDim

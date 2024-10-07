@@ -105,6 +105,15 @@ public class GuiPrefabs {
         timeline.playFromStart();
     }
 
+    public static void bindToggleAndWrapper(JFXButton toggle, Node wrapper, Duration duration) {
+        toggle.setOnAction(e -> {
+            if (wrapper.isVisible())
+                GuiPrefabs.fadeOutNode(wrapper, duration, null);
+            else
+                GuiPrefabs.fadeInNode(wrapper, duration, null);
+        });
+    }
+
     public static void replaceStyleClass(Node node, String from, String to) {
         HashSet<String> styleClass = new HashSet<>(Set.copyOf(node.getStyleClass()));
         styleClass.remove(from);
