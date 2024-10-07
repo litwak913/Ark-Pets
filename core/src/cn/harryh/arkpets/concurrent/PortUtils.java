@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.DatagramSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -36,6 +37,7 @@ public class PortUtils {
                 in.close();
                 if (socketData.operation == SocketData.Operation.HANDSHAKE_RESPONSE)
                     return serverPort;
+            } catch (ConnectException ignored) {
             } catch (JSONException ignored) {
                 Logger.warn("SocketServer", "Port " + serverPort + " responded with an invalid content");
             } catch (IOException ignored) {
