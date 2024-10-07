@@ -227,7 +227,6 @@ public class ArkChar {
         batch.setShader(shader1);
         ScreenUtils.clear(0, 0, 0, 0, true);
         batch.begin();
-        batch.draw(bgTexture, 0, 0);
         renderer.draw(batch, skeleton);
         batch.end();
         batch.setShader(null);
@@ -242,6 +241,7 @@ public class ArkChar {
         batch.setShader(shader2);
         ScreenUtils.clear(0, 0, 0, 0, true);
         batch.begin();
+        batch.draw(bgTexture, 0, 0);
         batch.draw(passedTexture,
                 0, 0, 0, 0, camera.getWidth(), camera.getHeight(),
                 1, 1, 0,
