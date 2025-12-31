@@ -35,6 +35,7 @@ public class ArkPets extends InputApplicationAdaptor {
     public MemberTrayImpl tray;
     public GeneralBehavior behavior;
     public TransitionVector2 windowPosition; // Window Position Easing
+    public AnimData keepAnim;
 
     private HWndCtrl hWndMine;
     private List<? extends HWndCtrl> hWndList;
@@ -126,26 +127,26 @@ public class ArkPets extends InputApplicationAdaptor {
 
         // 2.Select a new animation.
         AnimData newAnim;
-        if (tray.keepAnim == null) {
+        if (keepAnim == null) {
             if (behavior.isAutoAnimExpired()) {
                 newAnim = behavior.autoAnim(); // AI anim.
             } else {
                 newAnim = null;
             }
         } else {
-            newAnim = tray.keepAnim;
+            newAnim = keepAnim;
         }
 
         if (!isMouseDragging()) { // If no dragging:
             plane.updatePosition(Gdx.graphics.getDeltaTime());
             if (cha.getPlaying().mobility() != 0) {
                 int mobility = cha.getPlaying().mobility();
-                if (tray.keepAnim == null && willReachBorder(mobility)) {
+                if (keepAnim == null && willReachBorder(mobility)) {
                     // Turn around if auto-walk cause the collision from screen border.
                     newAnim = cha.getPlaying();
                     mobility = -mobility;
                     newAnim = new AnimData(newAnim.animClip(), null, newAnim.isLoop(), newAnim.isStrict(), mobility);
-                    tray.keepAnim = tray.keepAnim == null ? null : newAnim;
+                    keepAnim = keepAnim == null ? null : newAnim;
                 }
                 walkWindow(config.behavior_walk_speed * (isCtrlPressed() ? 2 : 1) * mobility);
             }
@@ -156,7 +157,7 @@ public class ArkPets extends InputApplicationAdaptor {
             newAnim = behavior.defaultAnim();
         } else if (plane.getDropped()) { // If dropped, play the dropped anim.
             newAnim = behavior.dropped();
-        } else if (tray.keepAnim != null) { // If action-mode is enabled.
+        } else if (keepAnim != null) { // If action-mode is enabled.
             if (isLeftPressed()) newAnim = behavior.walkAnim(-1);      // Left pressed
             else if (isRightPressed()) newAnim = behavior.walkAnim(1); // Right pressed
         }
@@ -169,7 +170,7 @@ public class ArkPets extends InputApplicationAdaptor {
 
         // 4.Outline.
         boolean renderOutline = switch (ArkConfig.getRenderOutlineFrom(
-                tray.keepAnim != null ? config.render_outline_emphasis : config.render_outline
+                keepAnim != null ? config.render_outline_emphasis : config.render_outline
         )) {
             case ALWAYS -> true;
             case PRESSING -> isMouseDown();
@@ -179,7 +180,7 @@ public class ArkPets extends InputApplicationAdaptor {
         };
         cha.setOutlineAlpha(renderOutline ? 1f : 0f);
         cha.setOutlineColor(ArkConfig.getGdxColorFrom(
-                tray.keepAnim != null ? config.render_outline_emphasis_color : config.render_outline_color
+                keepAnim != null ? config.render_outline_emphasis_color : config.render_outline_color
         ));
     }
 
@@ -224,9 +225,9 @@ public class ArkPets extends InputApplicationAdaptor {
             AnimData anim = cha.getPlaying();
             cha.setAnimation(anim.derive(Math.abs(anim.mobility()) * sign));
         }
-        if (tray.keepAnim != null && tray.keepAnim.mobility() != 0) {
-            AnimData anim = tray.keepAnim;
-            tray.keepAnim = anim.derive(Math.abs(anim.mobility()) * sign);
+        if (keepAnim != null && keepAnim.mobility() != 0) {
+            AnimData anim = keepAnim;
+            keepAnim = anim.derive(Math.abs(anim.mobility()) * sign);
         }
     }
 
@@ -306,14 +307,14 @@ public class ArkPets extends InputApplicationAdaptor {
 
     @Override
     protected void onKeyDown(int keycode) {
-        if (tray.keepAnim != null) { // Switch animation in action mode
+        if (keepAnim != null) { // Switch animation in action mode
             AnimData data;
             if (isUpPressed()) {
                 do {
                     data = behavior.prevAnim();
                 } while (data != null && data.animClip().type == AnimClip.AnimType.MOVE); // Skip Move Animation
                 if (data != null) {
-                    tray.keepAnim = data;
+                    keepAnim = data;
                     Logger.debug("Animation", "Switch to previous " + data);
                 }
             } else if (isDownPressed()) {
@@ -321,7 +322,7 @@ public class ArkPets extends InputApplicationAdaptor {
                     data = behavior.nextAnim();
                 } while (data != null && data.animClip().type == AnimClip.AnimType.MOVE);
                 if (data != null) {
-                    tray.keepAnim = data;
+                    keepAnim = data;
                     Logger.debug("Animation", "Switch to next " + data);
                 }
             }

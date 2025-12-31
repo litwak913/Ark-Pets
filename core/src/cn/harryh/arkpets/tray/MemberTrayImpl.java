@@ -4,7 +4,6 @@
 package cn.harryh.arkpets.tray;
 
 import cn.harryh.arkpets.ArkPets;
-import cn.harryh.arkpets.animations.AnimData;
 import cn.harryh.arkpets.concurrent.SocketClient;
 import cn.harryh.arkpets.concurrent.SocketData;
 import cn.harryh.arkpets.concurrent.SocketSession;
@@ -29,7 +28,6 @@ public class MemberTrayImpl extends MemberTray {
     private final JDialog popWindow;
     private final JPopupMenu popMenu;
     private TrayIcon icon;
-    public AnimData keepAnim;
 
     /** Initializes a per-character tray icon instance for an ArkPets. <br/>
      * Must be used after Gdx.app was initialized.
@@ -107,8 +105,8 @@ public class MemberTrayImpl extends MemberTray {
     public void onChangeStage() {
         Logger.info("MemberTray", "Request to change stage");
         arkPets.changeStage();
-        if (keepAnim != null) {
-            keepAnim = null;
+        if (arkPets.keepAnim != null) {
+            arkPets.keepAnim = null;
             popMenu.remove(optKeepAnimDis);
             popMenu.add(optKeepAnimEn, 1);
         }
@@ -133,7 +131,7 @@ public class MemberTrayImpl extends MemberTray {
     @Override
     public void onKeepAnimDis() {
         Logger.info("MemberTray", "Action-Mode disabled");
-        keepAnim = null;
+        arkPets.keepAnim = null;
         popMenu.remove(optKeepAnimDis);
         popMenu.add(optKeepAnimEn, 1);
     }
@@ -141,7 +139,7 @@ public class MemberTrayImpl extends MemberTray {
     @Override
     public void onKeepAnimEn() {
         Logger.info("MemberTray", "Action-Mode enabled");
-        keepAnim = arkPets.behavior.defaultAnim();
+        arkPets.keepAnim = arkPets.behavior.defaultAnim();
         popMenu.remove(optKeepAnimEn);
         popMenu.add(optKeepAnimDis, 1);
     }
