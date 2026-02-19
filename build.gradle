@@ -57,7 +57,8 @@ project(":core") {
         // libGDX
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-lwjgl3-angle:$gdxVersion"
+        api "org.lwjgl:lwjgl-opengles:3.3.1"
+        api "org.lwjgl:lwjgl-egl:3.3.1"
         // JNA
         api "net.java.dev.jna:jna:$jnaVersion"
         api "net.java.dev.jna:jna-platform:$jnaVersion"
