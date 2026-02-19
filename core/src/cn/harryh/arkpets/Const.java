@@ -8,13 +8,17 @@ import cn.harryh.arkpets.utils.IOUtils;
 import cn.harryh.arkpets.utils.Logger;
 import cn.harryh.arkpets.utils.Version;
 import javafx.util.Duration;
+import org.lwjgl.system.Configuration;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -102,9 +106,32 @@ public final class Const {
         public static final String urlMirrorChyan   = "https://mirrorchyan.com/?source=" + appName + "Gui";
         public static final String urlWikiPrefix    = "https://prts.wiki/w/";
         public static final String tempDirPath      = "temp/";
+        public static final String nativesDirPath      = "naitves/";
         public static final String fileModelsZipName            = "ArkModels";
         public static final String fileModelsDataPath           = "models_data.json";
         public static final String tempModelsUnzipDirPath       = tempDirPath + "models_unzipped/";
+
+        public static void setNativesPath(String nativesTemp) {
+            Configuration.SHARED_LIBRARY_EXTRACT_PATH.set(nativesTemp);
+            Configuration.DEBUG.set(true);
+            System.setProperty("jna.boot.library.path", nativesTemp);
+            System.setProperty("jna.tmpdir", nativesTemp);
+            System.setProperty("javafx.cachedir",nativesTemp);
+        }
+
+        public static void postCopyJna(String nativesTemp) {
+            // Copy jna temp to jnidispatch
+            var path = Path.of(nativesTemp);
+            try (var list = Files.list(path)) {
+                for (Iterator<Path> it = list.iterator(); it.hasNext(); ) {
+                    var e = it.next();
+                    var fname = e.getFileName().toString();
+                    if (fname.startsWith("jna") && (fname.endsWith("dll") || fname.endsWith("so") || fname.endsWith("dylib")))
+                        Files.copy(e, path.resolve("jnidispatch.dll"));
+                }
+            } catch (IOException ignored) {
+            }
+        }
     }
 
 

@@ -7,6 +7,7 @@ import cn.harryh.arkpets.utils.ArgPending;
 import cn.harryh.arkpets.utils.Logger;
 import javafx.application.Application;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Objects;
 
@@ -59,9 +60,15 @@ public class DesktopLauncher {
                 System.exit(0);
             }
         };
-
+        // Init natives extract path
+        File natives = new File(Const.PathConfig.nativesDirPath);
+        if (!(natives.exists() || natives.mkdir())) {
+            Logger.error("System", "Failed to create the natives directory.");
+        }
+        Const.PathConfig.setNativesPath(natives.getAbsolutePath());
         // Java FX bootstrap
         Application.launch(ArkHomeFX.class, args);
+        Const.PathConfig.postCopyJna(natives.getAbsolutePath());
         Logger.info("System", "Exited from DesktopLauncher successfully");
         System.exit(0);
     }

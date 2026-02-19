@@ -86,6 +86,12 @@ public class EmbeddedLauncher {
         if (!(temp.exists() || temp.mkdir())) {
             Logger.error("System", "Failed to create the temporary directory.");
         }
+        File natives = new File(PathConfig.nativesDirPath);
+        if (!(natives.exists() || natives.mkdir())) {
+            Logger.error("System", "Failed to create the natives directory.");
+        }
+        // Init natives extract path
+        PathConfig.setNativesPath(natives.getAbsolutePath());
         try {
             WindowSystem.init();
             Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -128,6 +134,7 @@ public class EmbeddedLauncher {
             System.exit(-1);
         }
         WindowSystem.free();
+        PathConfig.postCopyJna(natives.getAbsolutePath());
         Logger.info("System", "Exited from EmbeddedLauncher successfully");
         System.exit(0);
     }
