@@ -17,6 +17,7 @@
 package com.badlogic.gdx.backends.lwjgl3.angle;
 
 import cn.harryh.arkpets.ArkPets;
+import cn.harryh.arkpets.Const;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
 import java.io.*;
@@ -107,8 +108,7 @@ public class ANGLELoader {
 	 * @return null if a writable path could not be found. */
 	private static File getExtractedFile (String dirName, String fileName) {
 		// Temp directory with username in path.
-		File idealFile = new File(
-			System.getProperty("java.io.tmpdir") + "/libgdx" + System.getProperty("user.name") + "/" + dirName, fileName);
+		File idealFile = new File(Const.PathConfig.nativesDirPath, fileName);
 		if (canWrite(idealFile)) return idealFile;
 
 		// System provided temp directory.
