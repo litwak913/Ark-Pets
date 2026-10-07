@@ -379,18 +379,27 @@ public final class RootModule implements Controller<ArkHomeFX> {
             List<File> files = e.getDragboard().getFiles();
             if (files != null && files.size() == 1 && files.get(0).getName().endsWith(".zip")) {
                 File zipFile = files.get(0);
-                new UnzipModelsTask(app.body, GuiTask.GuiTaskStyle.STRICT, zipFile.getPath()) {
-                    @Override
-                    protected void onSucceeded(boolean result) {
-                        // Go to [Step 2/2]:
-                        new PostUnzipModelTask(parent, GuiTaskStyle.STRICT) {
-                            @Override
-                            protected void onSucceeded(boolean result) {
-                                app.modelsModule.modelReload(true);
-                            }
-                        }.start();
-                    }
-                }.start();
+                GuiPrefabs.Dialogs.createConfirmDialog(
+                        body,
+                        GuiPrefabs.Icons.getIcon(GuiPrefabs.Icons.SVG_HELP_ALT, GuiPrefabs.COLOR_INFO),
+                        "导入模型库",
+                        "准备导入模型库",
+                        zipFile.getAbsolutePath() + " 将作为模型库被导入",
+                        () -> {
+                            new UnzipModelsTask(app.body, GuiTask.GuiTaskStyle.STRICT, zipFile.getPath()) {
+                                @Override
+                                protected void onSucceeded(boolean result) {
+                                    // Go to [Step 2/2]:
+                                    new PostUnzipModelTask(parent, GuiTaskStyle.STRICT) {
+                                        @Override
+                                        protected void onSucceeded(boolean result) {
+                                            app.modelsModule.modelReload(true);
+                                        }
+                                    }.start();
+                                }
+                            }.start();
+                        })
+                .show();
             }
         });
         rootContainer.setOnDragExited(e -> {
