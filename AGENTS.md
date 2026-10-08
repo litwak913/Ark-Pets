@@ -13,14 +13,14 @@ It renders Spine models as interactive desktop pets, managed by a JavaFX GUI lau
 
 ### Tech Stack
 
-| Concern         | Library                                          |
-|-----------------|--------------------------------------------------|
-| Rendering       | libGDX 1.11 (LWJGL3 backend) + Spine runtime 3.8 |
-| Launcher GUI    | JavaFX 17 + JFoenix 9                            |
-| Window control  | JNA 5.12 (User32)                                |
-| JSON            | fastjson2                                        |
-| Logging         | reload4j via custom `Logger`                     |
-| Error reporting | Sentry                                           |
+| Concern         | Library                                                                                                       |
+|-----------------|---------------------------------------------------------------------------------------------------------------|
+| Rendering       | libGDX 1.14.2 (LWJGL3 backend + [Custom modification](https://github.com/AmiLego/libgdx)) + Spine runtime 3.8 |
+| Launcher GUI    | JavaFX 17 + JFoenix 9                                                                                         |
+| Window control  | JNA 5.12 (User32)                                                                                             |
+| JSON            | fastjson2                                                                                                     |
+| Logging         | reload4j via custom `Logger`                                                                                  |
+| Error reporting | Sentry                                                                                                        |
 
 ## Module Layout
 
