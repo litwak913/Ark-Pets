@@ -101,7 +101,7 @@ public class MemberTrayImpl extends MemberTray {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    Gdx.app.exit();
+                    Gdx.app.postRunnable(Gdx.app::exit);
                 }
             }, (int) durationNormal.toMillis());
         });
